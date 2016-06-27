@@ -31,12 +31,16 @@ class GroupAdd(GroupTest):
 
     def runTest(self):
         port1, = openflow_ports(1)
-
-        msg = ofp.message.group_add(
-            group_type=ofp.OFPGT_ALL,
-            group_id=0,
-            buckets=[
-                ofp.bucket(actions=[ofp.action.output(port1)])])
+        if (config["correction"]):
+            msg = ofp.message.group_add(
+                group_type=ofp.OFPGT_ALL,
+                group_id=0,
+                buckets=[ofp.bucket(watch_port=ofp.OFPP_ANY,watch_group=ofp.OFPG_ANY,actions=[ofp.action.output(port1)])])
+        else:
+            msg = ofp.message.group_add(
+                group_type=ofp.OFPGT_ALL,
+                group_id=0,
+                buckets=[ofp.bucket(actions=[ofp.action.output(port1)])])
 
         self.controller.message_send(msg)
         do_barrier(self.controller)
@@ -56,12 +60,17 @@ class GroupAddMaxID(GroupTest):
 
     def runTest(self):
         port1, = openflow_ports(1)
-
-        msg = ofp.message.group_add(
-            group_type=ofp.OFPGT_ALL,
-            group_id=ofp.OFPG_MAX,
-            buckets=[
-                ofp.bucket(actions=[ofp.action.output(port1)])])
+        
+        if (config["correction"]):
+            msg = ofp.message.group_add(
+                group_type=ofp.OFPGT_ALL,
+                group_id=ofp.OFPG_MAX,
+                buckets=[ofp.bucket(watch_port=ofp.OFPP_ANY,watch_group=ofp.OFPG_ANY,actions=[ofp.action.output(port1)])])
+        else:
+            msg = ofp.message.group_add(
+                group_type=ofp.OFPGT_ALL,
+                group_id=ofp.OFPG_MAX,
+                buckets=[ofp.bucket(actions=[ofp.action.output(port1)])])
 
         self.controller.message_send(msg)
         do_barrier(self.controller)
@@ -80,11 +89,18 @@ class GroupAddInvalidAction(GroupTest):
     """
 
     def runTest(self):
-        msg = ofp.message.group_add(
-            group_type=ofp.OFPGT_ALL,
-            group_id=0,
-            buckets=[
-                ofp.bucket(actions=[ofp.action.output(ofp.OFPP_ANY)])])
+        
+        if (config["correction"]):
+            msg = ofp.message.group_add(
+                group_type=ofp.OFPGT_ALL,
+                group_id=0,
+                buckets=[ofp.bucket(watch_port=ofp.OFPP_ANY,watch_group=ofp.OFPG_ANY,actions=[ofp.action.output(ofp.OFPP_ANY)])])
+        else:
+            msg = ofp.message.group_add(
+                group_type=ofp.OFPGT_ALL,
+                group_id=0,
+                buckets=[ofp.bucket(actions=[ofp.action.output(ofp.OFPP_ANY)])])
+        
 
         response, _ = self.controller.transact(msg)
         self.assertIsInstance(response, ofp.message.bad_action_error_msg)
@@ -99,20 +115,30 @@ class GroupAddExisting(GroupTest):
     def runTest(self):
         port1, port2, = openflow_ports(2)
 
-        msg = ofp.message.group_add(
-            group_type=ofp.OFPGT_ALL,
-            group_id=0,
-            buckets=[
-                ofp.bucket(actions=[ofp.action.output(port1)])])
+        if (config["correction"]):
+            msg = ofp.message.group_add(
+                group_type=ofp.OFPGT_ALL,
+                group_id=0,
+                buckets=[ofp.bucket(watch_port=ofp.OFPP_ANY,watch_group=ofp.OFPG_ANY,actions=[ofp.action.output(port1)])])
+        else:
+            msg = ofp.message.group_add(
+                group_type=ofp.OFPGT_ALL,
+                group_id=0,
+                buckets=[ofp.bucket(actions=[ofp.action.output(port1)])])
 
         self.controller.message_send(msg)
         do_barrier(self.controller)
 
-        msg = ofp.message.group_add(
-            group_type=ofp.OFPGT_ALL,
-            group_id=0,
-            buckets=[
-                ofp.bucket(actions=[ofp.action.output(port2)])])
+        if (config["correction"]):
+            msg = ofp.message.group_add(
+                group_type=ofp.OFPGT_ALL,
+                group_id=0,
+                buckets=[ofp.bucket(watch_port=ofp.OFPP_ANY,watch_group=ofp.OFPG_ANY,actions=[ofp.action.output(port2)])])
+        else:
+            msg = ofp.message.group_add(
+                group_type=ofp.OFPGT_ALL,
+                group_id=0,
+                buckets=[ofp.bucket(actions=[ofp.action.output(port2)])])
 
         response, _ = self.controller.transact(msg)
         self.assertIsInstance(response, ofp.message.group_mod_failed_error_msg)
@@ -126,12 +152,17 @@ class GroupAddInvalidID(GroupTest):
 
     def runTest(self):
         port1, = openflow_ports(1)
+        if (config["correction"]):
+            msg = ofp.message.group_add(
+                group_type=ofp.OFPGT_ALL,
+                group_id=ofp.OFPG_ALL,
+                buckets=[ofp.bucket(watch_port=ofp.OFPP_ANY,watch_group=ofp.OFPG_ANY,actions=[ofp.action.output(port1)])])
+        else:
+            msg = ofp.message.group_add(
+                group_type=ofp.OFPGT_ALL,
+                group_id=ofp.OFPG_ALL,
+                buckets=[ofp.bucket(actions=[ofp.action.output(port1)])])
 
-        msg = ofp.message.group_add(
-            group_type=ofp.OFPGT_ALL,
-            group_id=ofp.OFPG_ALL,
-            buckets=[
-                ofp.bucket(actions=[ofp.action.output(port1)])])
 
         response, _ = self.controller.transact(msg)
         self.assertIsInstance(response, ofp.message.group_mod_failed_error_msg)
@@ -145,12 +176,18 @@ class GroupAddMinimumInvalidID(GroupTest):
 
     def runTest(self):
         port1, = openflow_ports(1)
+        
+        if (config["correction"]):
+            msg = ofp.message.group_add(
+                group_type=ofp.OFPGT_ALL,
+                group_id=ofp.OFPG_MAX+1,
+                buckets=[ofp.bucket(watch_port=ofp.OFPP_ANY,watch_group=ofp.OFPG_ANY,actions=[ofp.action.output(port1)])])
+        else:
+            msg = ofp.message.group_add(
+                group_type=ofp.OFPGT_ALL,
+                group_id=ofp.OFPG_MAX+1,
+                buckets=[ofp.bucket(actions=[ofp.action.output(port1)])])
 
-        msg = ofp.message.group_add(
-            group_type=ofp.OFPGT_ALL,
-            group_id=ofp.OFPG_MAX+1,
-            buckets=[
-                ofp.bucket(actions=[ofp.action.output(port1)])])
 
         response, _ = self.controller.transact(msg)
         self.assertIsInstance(response, ofp.message.group_mod_failed_error_msg)
@@ -164,24 +201,42 @@ class GroupModify(GroupTest):
 
     def runTest(self):
         port1, port2, = openflow_ports(2)
+        
+        if (config["correction"]):
+            msg = ofp.message.group_add(
+                group_type=ofp.OFPGT_ALL,
+                group_id=0,
+                buckets=[ofp.bucket(watch_port=ofp.OFPP_ANY,watch_group=ofp.OFPG_ANY,actions=[ofp.action.output(port1)])])
+                
+            self.controller.message_send(msg)
+            do_barrier(self.controller)
+                
+            msg = ofp.message.group_modify(
+                group_type=ofp.OFPGT_ALL,
+                group_id=0,
+                buckets=[ofp.bucket(watch_port=ofp.OFPP_ANY,watch_group=ofp.OFPG_ANY,actions=[ofp.action.output(port2)])])
+                
+            self.controller.message_send(msg)
+            do_barrier(self.controller)
+            
+        else:
+            msg = ofp.message.group_add(
+                group_type=ofp.OFPGT_ALL,
+                group_id=0,
+                buckets=[ofp.bucket(actions=[ofp.action.output(port1)])])
+            
+            self.controller.message_send(msg)
+            do_barrier(self.controller)
 
-        msg = ofp.message.group_add(
-            group_type=ofp.OFPGT_ALL,
-            group_id=0,
-            buckets=[
-                ofp.bucket(actions=[ofp.action.output(port1)])])
+            msg = ofp.message.group_modify(
+                group_type=ofp.OFPGT_ALL,
+                group_id=0,
+                buckets=[
+                    ofp.bucket(actions=[ofp.action.output(port2)])])
 
-        self.controller.message_send(msg)
-        do_barrier(self.controller)
+            self.controller.message_send(msg)
+            do_barrier(self.controller)
 
-        msg = ofp.message.group_modify(
-            group_type=ofp.OFPGT_ALL,
-            group_id=0,
-            buckets=[
-                ofp.bucket(actions=[ofp.action.output(port2)])])
-
-        self.controller.message_send(msg)
-        do_barrier(self.controller)
 
         stats = get_stats(self, ofp.message.group_desc_stats_request())
         self.assertEquals(stats, [
@@ -198,13 +253,18 @@ class GroupModifyNonexisting(GroupTest):
 
     def runTest(self):
         port1, = openflow_ports(1)
-
-        msg = ofp.message.group_modify(
-            group_type=ofp.OFPGT_ALL,
-            group_id=0,
-            buckets=[
-                ofp.bucket(actions=[ofp.action.output(port1)])])
-
+        
+        if (config["correction"]):
+            msg = ofp.message.group_modify(
+                group_type=ofp.OFPGT_ALL,
+                group_id=0,
+                buckets=[ofp.bucket(watch_port=ofp.OFPP_ANY,watch_group=ofp.OFPG_ANY,actions=[ofp.action.output(port1)])])
+        else:
+            msg = ofp.message.group_modify(
+                group_type=ofp.OFPGT_ALL,
+                group_id=0,
+                buckets=[ofp.bucket(actions=[ofp.action.output(port1)])])
+                
         response, _ = self.controller.transact(msg)
         self.assertIsInstance(response, ofp.message.group_mod_failed_error_msg)
         self.assertEquals(response.code, ofp.OFPGMFC_UNKNOWN_GROUP)
@@ -216,41 +276,77 @@ class GroupModifyLoop(GroupTest):
     """
 
     def runTest(self):
-        port1, = openflow_ports(1)
+        port1, = openflow_ports(1) 
+        
+        if (config["correction"]):
+            msg = ofp.message.group_add(
+                group_type=ofp.OFPGT_ALL,
+                group_id=0,
+                buckets=[
+                    ofp.bucket(watch_port=ofp.OFPP_ANY,watch_group=ofp.OFPG_ANY,actions=[ofp.action.output(port1)])])
 
-        msg = ofp.message.group_add(
+            self.controller.message_send(msg)
+            do_barrier(self.controller)
+
+            msg = ofp.message.group_add(
+                group_type=ofp.OFPGT_ALL,
+                group_id=1,
+                buckets=[
+                    ofp.bucket(watch_port=ofp.OFPP_ANY,watch_group=ofp.OFPG_ANY,actions=[ofp.action.group(0)])])
+
+            self.controller.message_send(msg)
+            do_barrier(self.controller)
+
+            msg = ofp.message.group_add(
+                group_type=ofp.OFPGT_ALL,
+                group_id=2,
+                buckets=[
+                    ofp.bucket(watch_port=ofp.OFPP_ANY,watch_group=ofp.OFPG_ANY,actions=[ofp.action.group(1)])])
+
+            self.controller.message_send(msg)
+            do_barrier(self.controller)
+
+            msg = ofp.message.group_modify(
+                group_type=ofp.OFPGT_ALL,
+                group_id=0,
+                buckets=[
+                    ofp.bucket(watch_port=ofp.OFPP_ANY,watch_group=ofp.OFPG_ANY,actions=[ofp.action.group(2)])])
+
+        else:
+            msg = ofp.message.group_add(
             group_type=ofp.OFPGT_ALL,
             group_id=0,
             buckets=[
                 ofp.bucket(actions=[ofp.action.output(port1)])])
 
-        self.controller.message_send(msg)
-        do_barrier(self.controller)
+            self.controller.message_send(msg)
+            do_barrier(self.controller)
 
-        msg = ofp.message.group_add(
-            group_type=ofp.OFPGT_ALL,
-            group_id=1,
-            buckets=[
-                ofp.bucket(actions=[ofp.action.group(0)])])
+            msg = ofp.message.group_add(
+                group_type=ofp.OFPGT_ALL,
+                group_id=1,
+                buckets=[
+                    ofp.bucket(actions=[ofp.action.group(0)])])
 
-        self.controller.message_send(msg)
-        do_barrier(self.controller)
+            self.controller.message_send(msg)
+            do_barrier(self.controller)
 
-        msg = ofp.message.group_add(
-            group_type=ofp.OFPGT_ALL,
-            group_id=2,
-            buckets=[
-                ofp.bucket(actions=[ofp.action.group(1)])])
+            msg = ofp.message.group_add(
+                group_type=ofp.OFPGT_ALL,
+                group_id=2,
+                buckets=[
+                    ofp.bucket(actions=[ofp.action.group(1)])])
 
-        self.controller.message_send(msg)
-        do_barrier(self.controller)
+            self.controller.message_send(msg)
+            do_barrier(self.controller)
 
-        msg = ofp.message.group_modify(
-            group_type=ofp.OFPGT_ALL,
-            group_id=0,
-            buckets=[
-                ofp.bucket(actions=[ofp.action.group(2)])])
+            msg = ofp.message.group_modify(
+                group_type=ofp.OFPGT_ALL,
+                group_id=0,
+                buckets=[
+                    ofp.bucket(actions=[ofp.action.group(2)])])
 
+            
         response, _ = self.controller.transact(msg)
         self.assertIsInstance(response, ofp.message.group_mod_failed_error_msg)
         self.assertEquals(response.code, ofp.OFPGMFC_LOOP)
@@ -263,12 +359,18 @@ class GroupModifyInvalidID(GroupTest):
 
     def runTest(self):
         port1, = openflow_ports(1)
-
-        msg = ofp.message.group_add(
-            group_type=ofp.OFPGT_ALL,
-            group_id=ofp.OFPG_ALL,
-            buckets=[
-                ofp.bucket(actions=[ofp.action.output(port1)])])
+        
+        if (config["correction"]):
+            msg = ofp.message.group_add(
+                group_type=ofp.OFPGT_ALL,
+                group_id=ofp.OFPG_ALL,
+                buckets=[ofp.bucket(watch_port=ofp.OFPP_ANY,watch_group=ofp.OFPG_ANY,actions=[ofp.action.output(port1)])])
+        else:
+            msg = ofp.message.group_add(
+                group_type=ofp.OFPGT_ALL,
+                group_id=ofp.OFPG_ALL,
+                buckets=[ofp.bucket(actions=[ofp.action.output(port1)])])
+        
 
         response, _ = self.controller.transact(msg)
         self.assertIsInstance(response, ofp.message.group_mod_failed_error_msg)
@@ -283,11 +385,16 @@ class GroupModifyEmpty(GroupTest):
     def runTest(self):
         port1, = openflow_ports(1)
 
-        msg = ofp.message.group_add(
-            group_type=ofp.OFPGT_ALL,
-            group_id=0,
-            buckets=[
-                ofp.bucket(actions=[ofp.action.output(port1)])])
+        if (config["correction"]):
+            msg = ofp.message.group_add(
+                group_type=ofp.OFPGT_ALL,
+                group_id=0,
+                buckets=[ofp.bucket(watch_port=ofp.OFPP_ANY,watch_group=ofp.OFPG_ANY,actions=[ofp.action.output(port1)])])
+        else:
+            msg = ofp.message.group_add(
+                group_type=ofp.OFPGT_ALL,
+                group_id=0,
+                buckets=[ofp.bucket(actions=[ofp.action.output(port1)])])
 
         self.controller.message_send(msg)
         do_barrier(self.controller)
@@ -316,11 +423,16 @@ class GroupDeleteExisting(GroupTest):
     def runTest(self):
         port1, = openflow_ports(1)
 
-        msg = ofp.message.group_add(
-            group_type=ofp.OFPGT_ALL,
-            group_id=0,
-            buckets=[
-                ofp.bucket(actions=[ofp.action.output(port1)])])
+        if (config["correction"]):
+            msg = ofp.message.group_add(
+                group_type=ofp.OFPGT_ALL,
+                group_id=0,
+                buckets=[ofp.bucket(watch_port=ofp.OFPP_ANY,watch_group=ofp.OFPG_ANY,actions=[ofp.action.output(port1)])])
+        else:
+            msg = ofp.message.group_add(
+                group_type=ofp.OFPGT_ALL,
+                group_id=0,
+                buckets=[ofp.bucket(actions=[ofp.action.output(port1)])])
 
         self.controller.message_send(msg)
         do_barrier(self.controller)
@@ -354,24 +466,37 @@ class GroupDeleteAll(GroupTest):
 
     def runTest(self):
         port1, = openflow_ports(1)
+        
+        if (config["correction"]):
+            msg = ofp.message.group_add(
+                group_type=ofp.OFPGT_ALL,
+                group_id=0,
+                    buckets=[
+                        ofp.bucket(watch_port=ofp.OFPP_ANY, watch_group=ofp.OFPG_ANY, actions=[ofp.action.output(port1)])])
+            
+            self.controller.message_send(msg)
+            do_barrier(self.controller)
+            
+            msg = ofp.message.group_add(
+                group_type=ofp.OFPGT_ALL,
+                group_id=1,
+                    buckets=[
+                        ofp.bucket(watch_port=ofp.OFPP_ANY, watch_group=ofp.OFPG_ANY, actions=[ofp.action.output(port1)])])
 
-        msg = ofp.message.group_add(
-            group_type=ofp.OFPGT_ALL,
-            group_id=0,
-            buckets=[
-                ofp.bucket(actions=[ofp.action.output(port1)])])
-
-        self.controller.message_send(msg)
-        do_barrier(self.controller)
-
-        msg = ofp.message.group_add(
-            group_type=ofp.OFPGT_ALL,
-            group_id=1,
-            buckets=[
-                ofp.bucket(actions=[ofp.action.output(port1)])])
-
-        self.controller.message_send(msg)
-        do_barrier(self.controller)
+        else:
+            msg = ofp.message.group_add(
+                group_type=ofp.OFPGT_ALL,
+                group_id=0,
+                buckets=[ofp.bucket(actions=[ofp.action.output(port1)])])
+                
+            self.controller.message_send(msg)
+            do_barrier(self.controller)
+            
+            msg = ofp.message.group_add(
+                group_type=ofp.OFPGT_ALL,
+                group_id=1,
+                buckets=[ofp.bucket(actions=[ofp.action.output(port1)])])
+                
 
         msg = ofp.message.group_delete(group_id=ofp.OFPG_ALL)
 
@@ -390,12 +515,22 @@ class GroupAddAllWeight(GroupTest):
     def runTest(self):
         port1, port2, = openflow_ports(2)
 
-        msg = ofp.message.group_add(
-            group_type=ofp.OFPGT_ALL,
-            group_id=0,
-            buckets=[
-                ofp.bucket(weight=1, actions=[ofp.action.output(port1)]),
-                ofp.bucket(weight=2, actions=[ofp.action.output(port2)])])
+        if (config["correction"]):
+            msg = ofp.message.group_add(
+                group_type=ofp.OFPGT_ALL,
+                group_id=0,
+                    buckets=[
+                ofp.bucket(weight=1, watch_port=ofp.OFPP_ANY, watch_group=ofp.OFPG_ANY, actions=[ofp.action.output(port1)]),
+                ofp.bucket(weight=3, watch_port=ofp.OFPP_ANY, watch_group=ofp.OFPG_ANY, actions=[ofp.action.output(port2)])])
+
+        else:
+            msg = ofp.message.group_add(
+                group_type=ofp.OFPGT_ALL,
+                group_id=0,
+                buckets=[
+                    ofp.bucket(weight=1, actions=[ofp.action.output(port1)]),
+                    ofp.bucket(weight=2, actions=[ofp.action.output(port2)])])
+
 
         response, _ = self.controller.transact(msg)
         self.assertIsInstance(response, ofp.message.group_mod_failed_error_msg)
@@ -410,11 +545,19 @@ class GroupAddIndirectWeight(GroupTest):
     def runTest(self):
         port1, = openflow_ports(1)
 
-        msg = ofp.message.group_add(
-            group_type=ofp.OFPGT_INDIRECT,
-            group_id=0,
-            buckets=[
-                ofp.bucket(weight=1, actions=[ofp.action.output(port1)])])
+        if (config["correction"]):
+            msg = ofp.message.group_add(
+                group_type=ofp.OFPGT_INDIRECT,
+                group_id=0,
+                buckets=[
+                        ofp.bucket(weight=1, watch_port=ofp.OFPP_ANY,watch_group=ofp.OFPG_ANY,actions=[ofp.action.output(port1)])])
+        else:
+            msg = ofp.message.group_add(
+                group_type=ofp.OFPGT_INDIRECT,
+                group_id=0,
+                buckets=[
+                    ofp.bucket(weight=1, actions=[ofp.action.output(port1)])])
+
 
         response, _ = self.controller.transact(msg)
         self.assertIsInstance(response, ofp.message.group_mod_failed_error_msg)
@@ -428,13 +571,21 @@ class GroupAddIndirectBuckets(GroupTest):
 
     def runTest(self):
         port1, port2, = openflow_ports(2)
-
-        msg = ofp.message.group_add(
-            group_type=ofp.OFPGT_INDIRECT,
-            group_id=0,
-            buckets=[
-                ofp.bucket(actions=[ofp.action.output(port1)]),
-                ofp.bucket(actions=[ofp.action.output(port2)])])
+        
+        if (config["correction"]):
+            msg = ofp.message.group_add(
+                group_type=ofp.OFPGT_INDIRECT,
+                group_id=0,
+                buckets=[
+                        ofp.bucket(watch_port=ofp.OFPP_ANY,watch_group=ofp.OFPG_ANY,actions=[ofp.action.output(port1)]),
+                        ofp.bucket(watch_port=ofp.OFPP_ANY,watch_group=ofp.OFPG_ANY,actions=[ofp.action.output(port2)])])
+        else:
+            msg = ofp.message.group_add(
+                group_type=ofp.OFPGT_INDIRECT,
+                group_id=0,
+                buckets=[
+                    ofp.bucket(actions=[ofp.action.output(port1)]),
+                    ofp.bucket(actions=[ofp.action.output(port2)])])
 
         response, _ = self.controller.transact(msg)
         self.assertIsInstance(response, ofp.message.group_mod_failed_error_msg)
@@ -448,13 +599,22 @@ class GroupAddSelectNoWeight(GroupTest):
 
     def runTest(self):
         port1, port2, = openflow_ports(2)
-
-        msg = ofp.message.group_add(
-            group_type=ofp.OFPGT_SELECT,
-            group_id=0,
-            buckets=[
-                ofp.bucket(actions=[ofp.action.output(port1)]),
-                ofp.bucket(actions=[ofp.action.output(port2)])])
+        
+        
+        if (config["correction"]):
+            msg = ofp.message.group_add(
+                group_type=ofp.OFPGT_SELECT,
+                group_id=0,
+                buckets=[
+                        ofp.bucket(watch_port=ofp.OFPP_ANY,watch_group=ofp.OFPG_ANY,actions=[ofp.action.output(port1)]),
+                        ofp.bucket(watch_port=ofp.OFPP_ANY,watch_group=ofp.OFPG_ANY,actions=[ofp.action.output(port2)])])
+        else:
+            msg = ofp.message.group_add(
+                group_type=ofp.OFPGT_SELECT,
+                group_id=0,
+                buckets=[
+                    ofp.bucket(actions=[ofp.action.output(port1)]),
+                    ofp.bucket(actions=[ofp.action.output(port2)])])
 
         response, _ = self.controller.transact(msg)
         self.assertIsInstance(response, ofp.message.group_mod_failed_error_msg)
@@ -469,16 +629,30 @@ class GroupStats(GroupTest):
     def runTest(self):
         port1, port2, = openflow_ports(2)
 
-        msg = ofp.message.group_add(
-            group_type=ofp.OFPGT_ALL,
-            group_id=10,
-            buckets=[
-                ofp.bucket(actions=[
-                    ofp.action.set_field(ofp.oxm.tcp_src(2000)),
-                    ofp.action.output(port1)]),
-                ofp.bucket(actions=[
-                    ofp.action.set_field(ofp.oxm.tcp_src(3000)),
-                    ofp.action.output(port2)])])
+        if (config["correction"]):
+            msg = ofp.message.group_add(
+                group_type=ofp.OFPGT_ALL,
+                group_id=10,
+                buckets=[
+                    ofp.bucket(watch_port=ofp.OFPP_ANY,watch_group=ofp.OFPG_ANY,actions=[
+                        ofp.action.set_field(ofp.oxm.tcp_src(2000)),
+                        ofp.action.output(port1)]),
+                    ofp.bucket(watch_port=ofp.OFPP_ANY,watch_group=ofp.OFPG_ANY,actions=[
+                        ofp.action.set_field(ofp.oxm.tcp_src(3000)),
+                        ofp.action.output(port2)])])
+        else:
+            msg = ofp.message.group_add(
+                group_type=ofp.OFPGT_ALL,
+                group_id=10,
+                buckets=[
+                    ofp.bucket(actions=[
+                        ofp.action.set_field(ofp.oxm.tcp_src(2000)),
+                        ofp.action.output(port1)]),
+                    ofp.bucket(actions=[
+                        ofp.action.set_field(ofp.oxm.tcp_src(3000)),
+                        ofp.action.output(port2)])])
+
+        
 
         self.controller.message_send(msg)
         do_barrier(self.controller)
@@ -512,34 +686,67 @@ class GroupStatsAll(GroupTest):
 
     def runTest(self):
         port1, port2, = openflow_ports(2)
+        
+        
+        if (config["correction"]):
+            
+            msg0 = ofp.message.group_add(
+                group_type=ofp.OFPGT_ALL,
+                group_id=0,
+                buckets=[
+                    ofp.bucket(watch_port=ofp.OFPP_ANY,watch_group=ofp.OFPG_ANY,actions=[
+                        ofp.action.set_field(ofp.oxm.tcp_src(2000)),
+                        ofp.action.output(port1)]),
+                    ofp.bucket(watch_port=ofp.OFPP_ANY,watch_group=ofp.OFPG_ANY,actions=[
+                        ofp.action.set_field(ofp.oxm.tcp_src(3000)),
+                        ofp.action.output(port2)])])
+                        
+            self.controller.message_send(msg0)
+            do_barrier(self.controller)
+    
+            msg1 = ofp.message.group_add(
+                group_type=ofp.OFPGT_ALL,
+                group_id=1,
+                buckets=[
+                    ofp.bucket(watch_port=ofp.OFPP_ANY,watch_group=ofp.OFPG_ANY,actions=[
+                        ofp.action.set_field(ofp.oxm.tcp_src(2001)),
+                        ofp.action.output(port1)]),
+                    ofp.bucket(watch_port=ofp.OFPP_ANY,watch_group=ofp.OFPG_ANY,actions=[
+                        ofp.action.set_field(ofp.oxm.tcp_src(3001)),
+                        ofp.action.output(port2)])])
 
-        msg0 = ofp.message.group_add(
-            group_type=ofp.OFPGT_ALL,
-            group_id=0,
-            buckets=[
-                ofp.bucket(actions=[
-                    ofp.action.set_field(ofp.oxm.tcp_src(2000)),
-                    ofp.action.output(port1)]),
-                ofp.bucket(actions=[
-                    ofp.action.set_field(ofp.oxm.tcp_src(3000)),
-                    ofp.action.output(port2)])])
+            self.controller.message_send(msg1)
+            do_barrier(self.controller)
+                        
+                        
+        else:
+            msg0 = ofp.message.group_add(
+                group_type=ofp.OFPGT_ALL,
+                group_id=0,
+                buckets=[
+                    ofp.bucket(actions=[
+                        ofp.action.set_field(ofp.oxm.tcp_src(2000)),
+                        ofp.action.output(port1)]),
+                    ofp.bucket(actions=[
+                        ofp.action.set_field(ofp.oxm.tcp_src(3000)),
+                        ofp.action.output(port2)])])
 
-        self.controller.message_send(msg0)
-        do_barrier(self.controller)
+            self.controller.message_send(msg0)
+            do_barrier(self.controller)
+    
+            msg1 = ofp.message.group_add(
+                group_type=ofp.OFPGT_ALL,
+                group_id=1,
+                buckets=[
+                    ofp.bucket(actions=[
+                        ofp.action.set_field(ofp.oxm.tcp_src(2001)),
+                        ofp.action.output(port1)]),
+                    ofp.bucket(actions=[
+                        ofp.action.set_field(ofp.oxm.tcp_src(3001)),
+                        ofp.action.output(port2)])])
 
-        msg1 = ofp.message.group_add(
-            group_type=ofp.OFPGT_ALL,
-            group_id=1,
-            buckets=[
-                ofp.bucket(actions=[
-                    ofp.action.set_field(ofp.oxm.tcp_src(2001)),
-                    ofp.action.output(port1)]),
-                ofp.bucket(actions=[
-                    ofp.action.set_field(ofp.oxm.tcp_src(3001)),
-                    ofp.action.output(port2)])])
-
-        self.controller.message_send(msg1)
-        do_barrier(self.controller)
+            self.controller.message_send(msg1)
+            do_barrier(self.controller)
 
         request = ofp.message.group_stats_request(group_id=ofp.OFPG_ALL)
         stats = sorted(get_stats(self, request), key=lambda x: x.group_id)
@@ -566,69 +773,139 @@ class GroupDescStats(GroupTest):
 
     def runTest(self):
         port1, port2, port3, = openflow_ports(3)
-
-        msg0 = ofp.message.group_add(
-            group_type=ofp.OFPGT_ALL,
-            group_id=0,
-            buckets=[
-                ofp.bucket(actions=[
-                    ofp.action.set_field(ofp.oxm.tcp_src(2000)),
-                    ofp.action.output(port1)]),
-                ofp.bucket(actions=[
-                    ofp.action.set_field(ofp.oxm.tcp_src(3000)),
-                    ofp.action.output(port2)]),
-                ofp.bucket(actions=[
-                    ofp.action.set_field(ofp.oxm.tcp_src(4000)),
-                    ofp.action.output(port3)])])
-
-        self.controller.message_send(msg0)
-        do_barrier(self.controller)
-
-        msg1 = ofp.message.group_add(
-            group_type=ofp.OFPGT_SELECT,
-            group_id=1,
-            buckets=[
-                ofp.bucket(
-                    weight=1,
-                    actions=[
-                        ofp.action.set_field(ofp.oxm.tcp_src(2001)),
+        
+        if (config["correction"]):
+            msg0 = ofp.message.group_add(
+                group_type=ofp.OFPGT_ALL,
+                group_id=0,
+                buckets=[
+                    ofp.bucket(watch_port=ofp.OFPP_ANY,watch_group=ofp.OFPG_ANY,actions=[
+                        ofp.action.set_field(ofp.oxm.tcp_src(2000)),
                         ofp.action.output(port1)]),
-                ofp.bucket(
-                    weight=2,
-                    actions=[
-                        ofp.action.set_field(ofp.oxm.tcp_src(3001)),
+                    ofp.bucket(watch_port=ofp.OFPP_ANY,watch_group=ofp.OFPG_ANY,actions=[
+                        ofp.action.set_field(ofp.oxm.tcp_src(3000)),
                         ofp.action.output(port2)]),
-                ofp.bucket(
-                    weight=3,
-                    actions=[
-                        ofp.action.set_field(ofp.oxm.tcp_src(4001)),
+                    ofp.bucket(watch_port=ofp.OFPP_ANY,watch_group=ofp.OFPG_ANY,actions=[
+                        ofp.action.set_field(ofp.oxm.tcp_src(4000)),
                         ofp.action.output(port3)])])
 
-        self.controller.message_send(msg1)
-        do_barrier(self.controller)
+            self.controller.message_send(msg0)
+            do_barrier(self.controller)
 
-        msg2 = ofp.message.group_add(
-            group_type=ofp.OFPGT_FF,
-            group_id=2,
-            buckets=[
-                ofp.bucket(
-                    watch_port=port1,
-                    actions=[
-                        ofp.action.set_field(ofp.oxm.tcp_src(2002)),
+            msg1 = ofp.message.group_add(
+                group_type=ofp.OFPGT_SELECT,
+                group_id=1,
+                buckets=[
+                    ofp.bucket(
+                        weight=1,
+                        watch_port=ofp.OFPP_ANY,watch_group=ofp.OFPG_ANY,
+                        actions=[
+                            ofp.action.set_field(ofp.oxm.tcp_src(2001)),
+                            ofp.action.output(port1)]),
+                    ofp.bucket(
+                        weight=2,
+                        watch_port=ofp.OFPP_ANY,watch_group=ofp.OFPG_ANY,
+                        actions=[
+                            ofp.action.set_field(ofp.oxm.tcp_src(3001)),
+                            ofp.action.output(port2)]),
+                    ofp.bucket(
+                        weight=3,
+                        watch_port=ofp.OFPP_ANY,watch_group=ofp.OFPG_ANY,
+                        actions=[
+                            ofp.action.set_field(ofp.oxm.tcp_src(4001)),
+                            ofp.action.output(port3)])])
+
+            self.controller.message_send(msg1)
+            do_barrier(self.controller)
+
+            msg2 = ofp.message.group_add(
+                group_type=ofp.OFPGT_FF,
+                group_id=2,
+                buckets=[
+                    ofp.bucket(
+                        watch_port=port1,
+                        watch_group=ofp.OFPG_ANY,
+                        actions=[
+                            ofp.action.set_field(ofp.oxm.tcp_src(2002)),
+                            ofp.action.output(port1)]),
+                    ofp.bucket(
+                        watch_port=port2,
+                        watch_group=ofp.OFPG_ANY,
+                        actions=[
+                            ofp.action.set_field(ofp.oxm.tcp_src(3002)),
+                            ofp.action.output(port2,)]),
+                    ofp.bucket(
+                        watch_port=port3,
+                        watch_group=ofp.OFPG_ANY,
+                        actions=[
+                            ofp.action.set_field(ofp.oxm.tcp_src(4002)),
+                            ofp.action.output(port3,)])])
+
+            self.controller.message_send(msg2)
+            do_barrier(self.controller)
+        else:
+            msg0 = ofp.message.group_add(
+                group_type=ofp.OFPGT_ALL,
+                group_id=0,
+                buckets=[
+                    ofp.bucket(actions=[
+                        ofp.action.set_field(ofp.oxm.tcp_src(2000)),
                         ofp.action.output(port1)]),
-                ofp.bucket(
-                    watch_port=port2,
-                    actions=[
-                        ofp.action.set_field(ofp.oxm.tcp_src(3002)),
-                        ofp.action.output(port2,)]),
-                ofp.bucket(
-                    watch_port=port3,
-                    actions=[
-                        ofp.action.set_field(ofp.oxm.tcp_src(4002)),
-                        ofp.action.output(port3,)])])
+                    ofp.bucket(actions=[
+                        ofp.action.set_field(ofp.oxm.tcp_src(3000)),
+                        ofp.action.output(port2)]),
+                    ofp.bucket(actions=[
+                        ofp.action.set_field(ofp.oxm.tcp_src(4000)),
+                        ofp.action.output(port3)])])
 
-        self.controller.message_send(msg2)
-        do_barrier(self.controller)
+            self.controller.message_send(msg0)
+            do_barrier(self.controller)
+
+            msg1 = ofp.message.group_add(
+                group_type=ofp.OFPGT_SELECT,
+                group_id=1,
+                buckets=[
+                    ofp.bucket(
+                        weight=1,
+                        actions=[
+                            ofp.action.set_field(ofp.oxm.tcp_src(2001)),
+                            ofp.action.output(port1)]),
+                    ofp.bucket(
+                        weight=2,
+                        actions=[
+                            ofp.action.set_field(ofp.oxm.tcp_src(3001)),
+                            ofp.action.output(port2)]),
+                    ofp.bucket(
+                        weight=3,
+                        actions=[
+                            ofp.action.set_field(ofp.oxm.tcp_src(4001)),
+                            ofp.action.output(port3)])])
+
+            self.controller.message_send(msg1)
+            do_barrier(self.controller)
+
+            msg2 = ofp.message.group_add(
+                group_type=ofp.OFPGT_FF,
+                group_id=2,
+                buckets=[
+                    ofp.bucket(
+                        watch_port=port1,
+                        actions=[
+                            ofp.action.set_field(ofp.oxm.tcp_src(2002)),
+                            ofp.action.output(port1)]),
+                    ofp.bucket(
+                        watch_port=port2,
+                        actions=[
+                            ofp.action.set_field(ofp.oxm.tcp_src(3002)),
+                            ofp.action.output(port2,)]),
+                    ofp.bucket(
+                        watch_port=port3,
+                        actions=[
+                            ofp.action.set_field(ofp.oxm.tcp_src(4002)),
+                            ofp.action.output(port3,)])])
+
+            self.controller.message_send(msg2)
+            do_barrier(self.controller)
 
         request = ofp.message.group_desc_stats_request()
         stats = sorted(get_stats(self, request), key=lambda x: x.group_id)
@@ -749,12 +1026,23 @@ class SelectFwdEmpty(GroupTest):
 
         self.controller.message_send(msg)
         do_barrier(self.controller)
+        
+        if (config["correction"]):
+            msg = ofp.message.flow_add(
+                buffer_id=ofp.OFP_NO_BUFFER,
+                priority=1000,
+                instructions=[
+                    ofp.instruction.apply_actions(
+                        [ofp.action.output(port2), ofp.action.group(1)])])
+        else:
+            msg = ofp.message.flow_add(
+                buffer_id=ofp.OFP_NO_BUFFER,
+                priority=1000,
+                instructions=[
+                    ofp.instruction.apply_actions(
+                        [ofp.action.output(2), ofp.action.group(1)])])
 
-        msg = ofp.message.flow_add(
-            buffer_id=ofp.OFP_NO_BUFFER,
-            instructions=[
-                ofp.instruction.apply_actions(
-                    [ofp.action.output(2), ofp.action.group(1)])])
+
 
         self.controller.message_send(msg)
         do_barrier(self.controller)
@@ -773,12 +1061,20 @@ class SelectFwdSingle(GroupTest):
 
     def runTest(self):
         port1, port2 = openflow_ports(2)
+        
+        if (config["correction"]):
+            msg = ofp.message.group_add(
+                group_type=ofp.OFPGT_SELECT,
+                group_id=1,
+                buckets=[
+                    ofp.bucket(weight=1, watch_port=ofp.OFPP_ANY,watch_group=ofp.OFPG_ANY,actions=[ofp.action.output(port2)])])
 
-        msg = ofp.message.group_add(
-            group_type=ofp.OFPGT_SELECT,
-            group_id=1,
-            buckets=[
-                ofp.bucket(weight=1, actions=[ofp.action.output(port2)])])
+        else:
+            msg = ofp.message.group_add(
+                group_type=ofp.OFPGT_SELECT,
+                group_id=1,
+                buckets=[
+                    ofp.bucket(weight=1, actions=[ofp.action.output(port2)])])
 
         self.controller.message_send(msg)
         do_barrier(self.controller)
@@ -803,18 +1099,30 @@ class SelectFwdSpread(GroupTest):
     """
 
     def runTest(self):
-        num_out_ports = 3
+        num_out_ports = 2
         num_pkts = 1000
+        
+        if (config["correction"]):
+            port1, port2, port3 = openflow_ports(num_out_ports + 1)
+            out_ports = [port2, port3]
 
-        port1, port2, port3, port4 = openflow_ports(num_out_ports + 1)
-        out_ports = [port2, port3, port4]
+            msg = ofp.message.group_add(
+                group_type=ofp.OFPGT_SELECT,
+                group_id=1,
+                buckets=[
+                    ofp.bucket(weight=1, watch_port=ofp.OFPP_ANY,watch_group=ofp.OFPG_ANY,actions=[ofp.action.output(port)])
+                        for port in out_ports])
 
-        msg = ofp.message.group_add(
-            group_type=ofp.OFPGT_SELECT,
-            group_id=1,
-            buckets=[
-                ofp.bucket(weight=1, actions=[ofp.action.output(port)])
-                    for port in out_ports])
+        else:
+            port1, port2, port3, port4 = openflow_ports(num_out_ports + 1)
+            out_ports = [port2, port3, port4]
+
+            msg = ofp.message.group_add(
+                group_type=ofp.OFPGT_SELECT,
+                group_id=1,
+                buckets=[
+                    ofp.bucket(weight=1, watch_port=ofp.OFPP_ANY,watch_group=ofp.OFPG_ANY,actions=[ofp.action.output(port)])
+                        for port in out_ports])
 
         self.controller.message_send(msg)
         do_barrier(self.controller)

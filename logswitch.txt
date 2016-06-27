@@ -1,0 +1,44 @@
+WARNING: No route found for IPv6 destination :: (no default route?)
+bsn_flow_checksum.FlowChecksum ... FAIL
+bsn_flow_checksum.Resize ... FAIL
+bsn_flow_checksum.ResizeError ... ok
+bsn_flow_checksum.TableChecksumIds ... FAIL
+
+======================================================================
+FAIL: bsn_flow_checksum.FlowChecksum
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/madynes/OFTest/oftest/tests-1.3/bsn_flow_checksum.py", line 113, in runTest
+    self.assertEquals(self.get_table_checksum(), 0)
+  File "/home/madynes/OFTest/oftest/tests-1.3/bsn_flow_checksum.py", line 67, in get_table_checksum
+    for entry in get_stats(self, ofp.message.bsn_table_checksum_stats_request()):
+  File "/home/madynes/OFTest/oftest/src/python/oftest/testutils.py", line 1328, in get_stats
+    test.assertEquals(reply.type, msgtype, "Response had unexpected message type")
+AssertionError: Response had unexpected message type
+
+======================================================================
+FAIL: bsn_flow_checksum.Resize
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/madynes/OFTest/oftest/tests-1.3/bsn_flow_checksum.py", line 168, in runTest
+    self.assertEquals(self.get_table_checksum(), 0)
+  File "/home/madynes/OFTest/oftest/tests-1.3/bsn_flow_checksum.py", line 67, in get_table_checksum
+    for entry in get_stats(self, ofp.message.bsn_table_checksum_stats_request()):
+  File "/home/madynes/OFTest/oftest/src/python/oftest/testutils.py", line 1328, in get_stats
+    test.assertEquals(reply.type, msgtype, "Response had unexpected message type")
+AssertionError: Response had unexpected message type
+
+======================================================================
+FAIL: bsn_flow_checksum.TableChecksumIds
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/madynes/OFTest/oftest/tests-1.3/bsn_flow_checksum.py", line 284, in runTest
+    table_checksum_stats_ids = [x.table_id for x in get_stats(self, ofp.message.bsn_table_checksum_stats_request())]
+  File "/home/madynes/OFTest/oftest/src/python/oftest/testutils.py", line 1328, in get_stats
+    test.assertEquals(reply.type, msgtype, "Response had unexpected message type")
+AssertionError: Response had unexpected message type
+
+----------------------------------------------------------------------
+Ran 4 tests in 26.703s
+
+FAILED (failures=3)

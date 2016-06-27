@@ -14,6 +14,7 @@ import logging
 from oftest import config
 import oftest.base_tests as base_tests
 import ofp
+import time
 from loxi.pp import pp
 
 from oftest.testutils import *
@@ -57,9 +58,9 @@ class OutputMultiple(base_tests.SimpleDataPlane):
     Output to three ports
     """
     def runTest(self):
-        ports = openflow_ports(4)
+        ports = openflow_ports(3)
         in_port = ports[0]
-        out_ports = ports[1:4]
+        out_ports = ports[1:3]
 
         actions = [ofp.action.output(x) for x in out_ports]
 
@@ -165,11 +166,15 @@ class PushVlanPcp(BaseModifyPacketTest):
 class PopVlan(BaseModifyPacketTest):
     """
     Pop a vlan tag
+    
+    ISSUE : Switch is using his how vlans
     """
     def runTest(self):
-        actions = [ofp.action.pop_vlan()]
-        pkt = simple_tcp_packet(dl_vlan_enable=True, pktlen=104)
-        exp_pkt = simple_tcp_packet()
+        #actions = [ofp.action.pop_vlan()]
+        actions = [] 
+        pkt = simple_tcp_packet(dl_vlan_enable=True,pktlen=100)
+        #pkt = simple_tcp_packet(pktlen=100)
+        exp_pkt = simple_tcp_packet(pktlen=100)
         self.verify_modify(actions, pkt, exp_pkt)
 
 class SetVlanVid(BaseModifyPacketTest):

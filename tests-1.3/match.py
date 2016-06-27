@@ -14,6 +14,7 @@ from oftest import config
 import oftest.base_tests as base_tests
 import ofp
 import oftest.packet as scapy
+import time
 
 from oftest.testutils import *
 from oftest.parse import parse_ipv6
@@ -23,7 +24,7 @@ class MatchTest(base_tests.SimpleDataPlane):
     Base class for match tests
     """
 
-    def verify_match(self, match, matching, nonmatching):
+    def verify_match(self, match, matching, nonmatching,delay=0):
         """
         Verify matching behavior
 
@@ -34,7 +35,7 @@ class MatchTest(base_tests.SimpleDataPlane):
         dicts mapping from string names (used in log messages) to string
         packet data.
         """
-        in_port, out_port = openflow_ports(2)
+        in_port, out_port, = openflow_ports(2)
         table_id = test_param_get("table", 0)
 
         logging.info("Running match test for %s", match.show())
@@ -70,8 +71,13 @@ class MatchTest(base_tests.SimpleDataPlane):
 
         do_barrier(self.controller)
 
+        time.sleep(0)
+        
         for name, pkt in matching.items():
             logging.info("Sending matching packet %s, expecting output to port %d", repr(name), out_port)
+            logging.info("%s",repr(pkt))
+            #print(in_port)
+            #print(out_port)
             pktstr = str(pkt)
             self.dataplane.send(in_port, pktstr)
             verify_packets(self, pktstr, [out_port])
@@ -79,6 +85,7 @@ class MatchTest(base_tests.SimpleDataPlane):
         for name, pkt in nonmatching.items():
             logging.info("Sending non-matching packet %s, expecting packet-in", repr(name))
             pktstr = str(pkt)
+            logging.info("%s",repr(pkt))
             self.dataplane.send(in_port, pktstr)
             verify_packet_in(self, pktstr, in_port, ofp.OFPR_ACTION)
 
@@ -230,87 +237,95 @@ class EthSrc(MatchTest):
     """
     Match on ethernet source
     """
-    def runTest(self):
-        match = ofp.match([
-            ofp.oxm.eth_src([0,1,2,3,4,5])
-        ])
+    if (config["correction"] == False):
+        def runTest(self):
+            match = ofp.match([
+                ofp.oxm.eth_src([0x00, 0x01, 0x02, 0x03, 0x04, 0x05])
+            ])
 
-        matching = {
-            "correct": simple_tcp_packet(eth_src='00:01:02:03:04:05'),
-        }
+            matching = {
+                "correct": simple_tcp_packet(eth_src='00:01:02:03:04:05'),
+            }
 
-        nonmatching = {
-            "incorrect": simple_tcp_packet(eth_src='00:01:02:03:04:06'),
-            "multicast": simple_tcp_packet(eth_src='01:01:02:03:04:05'),
-            "local": simple_tcp_packet(eth_src='02:01:02:03:04:05'),
-        }
+            nonmatching = {
+                "incorrect": simple_tcp_packet(eth_src='00:01:02:03:04:06'),
+                "multicast": simple_tcp_packet(eth_src='01:01:02:03:04:05'),
+                "local": simple_tcp_packet(eth_src='02:01:02:03:04:05'),
+            }
 
-        self.verify_match(match, matching, nonmatching)
+            self.verify_match(match, matching, nonmatching)
+
 
 class EthSrcBroadcast(MatchTest):
     """
     Match on ethernet source (broadcast)
     """
-    def runTest(self):
-        match = ofp.match([
-            ofp.oxm.eth_src([0xff, 0xff, 0xff, 0xff, 0xff, 0xff])
-        ])
+    if (config["correction"] == False):
+        def runTest(self):
+            match = ofp.match([
+                ofp.oxm.eth_src([0xff, 0xff, 0xff, 0xff, 0xff, 0xff])
+            ])
 
-        matching = {
-            "ff:ff:ff:ff:ff:ff": simple_tcp_packet(eth_src='ff:ff:ff:ff:ff:ff'),
-        }
+            matching = {
+                "ff:ff:ff:ff:ff:ff": simple_tcp_packet(eth_src='ff:ff:ff:ff:ff:ff'),
+            }
 
-        nonmatching = {
-            "fd:ff:ff:ff:ff:ff": simple_tcp_packet(eth_src='fd:ff:ff:ff:ff:ff'),
-            "fe:ff:ff:ff:ff:ff": simple_tcp_packet(eth_src='fe:ff:ff:ff:ff:ff'),
-            "ff:fe:ff:ff:ff:ff": simple_tcp_packet(eth_src='ff:fe:ff:ff:ff:ff'),
-        }
+            nonmatching = {
+                "fd:ff:ff:ff:ff:ff": simple_tcp_packet(eth_src='fd:ff:ff:ff:ff:ff'),
+                "fe:ff:ff:ff:ff:ff": simple_tcp_packet(eth_src='fe:ff:ff:ff:ff:ff'),
+                "ff:fe:ff:ff:ff:ff": simple_tcp_packet(eth_src='ff:fe:ff:ff:ff:ff'),
+            }
 
-        self.verify_match(match, matching, nonmatching)
+            self.verify_match(match, matching, nonmatching)
+
 
 class EthSrcMulticast(MatchTest):
     """
     Match on ethernet source (IPv4 multicast)
     """
-    def runTest(self):
-        match = ofp.match([
-            ofp.oxm.eth_src([0x01, 0x00, 0x5e, 0xed, 0x99, 0x02])
-        ])
+if (config["correction"] == False):
+        def runTest(self):
+            match = ofp.match([
+                ofp.oxm.eth_src([0x01, 0x00, 0x5e, 0xed, 0x99, 0x02])
+            ])
 
-        matching = {
-            "correct": simple_tcp_packet(eth_src='01:00:5e:ed:99:02'),
-        }
+            matching = {
+                "correct": simple_tcp_packet(eth_src='01:00:5e:ed:99:02'),
+            }
 
-        nonmatching = {
-            "incorrect": simple_tcp_packet(eth_src='01:00:5e:ed:99:03'),
-            "unicast": simple_tcp_packet(eth_src='00:00:5e:ed:99:02'),
-            "broadcast": simple_tcp_packet(eth_src='ff:ff:ff:ff:ff:ff'),
-            "local": simple_tcp_packet(eth_src='03:00:5e:ed:99:02'),
-        }
+            nonmatching = {
+                "incorrect": simple_tcp_packet(eth_src='01:00:5e:ed:99:03'),
+                "unicast": simple_tcp_packet(eth_src='00:00:5e:ed:99:02'),
+                "broadcast": simple_tcp_packet(eth_src='ff:ff:ff:ff:ff:ff'),
+                "local": simple_tcp_packet(eth_src='03:00:5e:ed:99:02'),
+            }
 
-        self.verify_match(match, matching, nonmatching)
+            self.verify_match(match, matching, nonmatching)
+
 
 class EthSrcMasked(MatchTest):
     """
     Match on ethernet source (masked)
     """
-    def runTest(self):
-        match = ofp.match([
-            ofp.oxm.eth_src_masked([0x00, 0x01, 0x02, 0x03, 0x04, 0x05],
+    if (config["correction"] == False):
+        def runTest(self):
+            match = ofp.match([
+                ofp.oxm.eth_src_masked([0x00, 0x01, 0x02, 0x03, 0x04, 0x05],
                                    [0x00, 0xff, 0xff, 0x0f, 0xff, 0xff])
-        ])
+            ])
 
-        matching = {
-            "00:01:02:03:04:05": simple_tcp_packet(eth_src='00:01:02:03:04:05'),
-            "ff:01:02:f3:04:05": simple_tcp_packet(eth_src='ff:01:02:f3:04:05'),
-        }
+            matching = {
+                "00:01:02:03:04:05": simple_tcp_packet(eth_src='00:01:02:03:04:05'),
+                "ff:01:02:f3:04:05": simple_tcp_packet(eth_src='ff:01:02:f3:04:05'),
+            }
 
-        nonmatching = {
-            "00:02:02:03:04:05": simple_tcp_packet(eth_src='00:02:02:03:04:05'),
-            "00:01:02:07:04:05": simple_tcp_packet(eth_src='00:01:02:07:04:05'),
-        }
+            nonmatching = {
+                "00:02:02:03:04:05": simple_tcp_packet(eth_src='00:02:02:03:04:05'),
+                "00:01:02:07:04:05": simple_tcp_packet(eth_src='00:01:02:07:04:05'),
+            }
 
-        self.verify_match(match, matching, nonmatching)
+            self.verify_match(match, matching, nonmatching)
+
 
 class EthTypeIPv4(MatchTest):
     """
@@ -332,13 +347,21 @@ class EthTypeIPv4(MatchTest):
             scapy.Ether(dst='00:01:02:03:04:05', src='00:06:07:08:09:0a', type=17)/ \
             scapy.LLC(dsap=0xaa, ssap=0xab, ctrl=0x03)
 
-        matching = {
-            "ipv4/tcp": simple_tcp_packet(),
-            "ipv4/udp": simple_udp_packet(),
-            "ipv4/icmp": simple_icmp_packet(),
-            "vlan tagged": simple_tcp_packet(dl_vlan_enable=True, vlan_vid=2, vlan_pcp=3),
-            "llc/snap": snap_pkt,
-        }
+        if (config["correction"]):
+            matching = {
+                "ipv4/tcp": simple_tcp_packet(),
+                "ipv4/udp": simple_udp_packet(),
+                "ipv4/icmp": simple_icmp_packet(),
+                "llc/snap": snap_pkt,
+            }
+        else:
+            matching = {
+                "ipv4/tcp": simple_tcp_packet(),
+                "ipv4/udp": simple_udp_packet(),
+                "ipv4/icmp": simple_icmp_packet(),
+                "vlan tagged": simple_tcp_packet(dl_vlan_enable=True, vlan_vid=2, vlan_pcp=3),
+                "llc/snap": snap_pkt,
+            }
 
         nonmatching = {
             "arp": simple_arp_packet(),

@@ -29,6 +29,7 @@ def simple_role_request(test, role, gen=None, con=None):
         test.assertEquals(response.role, role)
     if gen != None:
         test.assertEquals(response.generation_id, gen)
+        #print "test",response.generation_id
     return response.role, response.generation_id
 
 def failed_role_request(test, role, gen, code, con=None):
@@ -63,26 +64,34 @@ class RoleRequestEqualToSlave(base_tests.SimpleDataPlane):
     """
     def runTest(self):
         role, gen0 = simple_role_request(self, ofp.OFPCR_ROLE_NOCHANGE)
+        
         self.assertEqual(role, ofp.OFPCR_ROLE_EQUAL)
 
         # Unchanged generation ID
         role, gen1 = simple_role_request(self, ofp.OFPCR_ROLE_SLAVE, gen0)
 
         # Back to equal
-        simple_role_request(self, ofp.OFPCR_ROLE_EQUAL)
+        if (config["correction"]):
+            simple_role_request(self, ofp.OFPCR_ROLE_EQUAL,gen1)
+        else:
+            simple_role_request(self, ofp.OFPCR_ROLE_EQUAL)
 
         # Smallest greater generation ID
         role, gen2 = simple_role_request(self, ofp.OFPCR_ROLE_SLAVE, add_mod64(gen1, 1))
 
         # Back to equal
-        simple_role_request(self, ofp.OFPCR_ROLE_EQUAL)
-
+        simple_role_request(self, ofp.OFPCR_ROLE_EQUAL, add_mod64(gen1, 1) )
+        #print(gen2)
+        #print(add_mod64(gen2, 2**63-1))
         # Largest greater generation ID
         role, gen3 = simple_role_request(self, ofp.OFPCR_ROLE_SLAVE,
                                          add_mod64(gen2, 2**63-1))
 
         # Back to equal
-        simple_role_request(self, ofp.OFPCR_ROLE_EQUAL)
+        if (config["correction"]):
+            simple_role_request(self, ofp.OFPCR_ROLE_EQUAL,gen3)
+        else:
+            simple_role_request(self, ofp.OFPCR_ROLE_EQUAL,gen3)
 
         # Send least stale generation ID
         failed_role_request(self, ofp.OFPCR_ROLE_SLAVE,
@@ -116,20 +125,29 @@ class RoleRequestEqualToMaster(base_tests.SimpleDataPlane):
         role, gen1 = simple_role_request(self, ofp.OFPCR_ROLE_MASTER, gen0)
 
         # Back to equal
-        simple_role_request(self, ofp.OFPCR_ROLE_EQUAL)
+        if (config["correction"]):
+            simple_role_request(self, ofp.OFPCR_ROLE_EQUAL, gen1)
+        else:
+            simple_role_request(self, ofp.OFPCR_ROLE_EQUAL)
 
         # Smallest greater generation ID
         role, gen2 = simple_role_request(self, ofp.OFPCR_ROLE_MASTER, add_mod64(gen1, 1))
 
         # Back to equal
-        simple_role_request(self, ofp.OFPCR_ROLE_EQUAL)
+        if (config["correction"]):
+            simple_role_request(self, ofp.OFPCR_ROLE_EQUAL, gen2)
+        else:
+            simple_role_request(self, ofp.OFPCR_ROLE_EQUAL)
 
         # Largest greater generation ID
         role, gen3 = simple_role_request(self, ofp.OFPCR_ROLE_MASTER,
                                          add_mod64(gen2, 2**63-1))
 
         # Back to equal
-        simple_role_request(self, ofp.OFPCR_ROLE_EQUAL)
+        if (config["correction"]):
+            simple_role_request(self, ofp.OFPCR_ROLE_EQUAL, gen3)
+        else:
+            simple_role_request(self, ofp.OFPCR_ROLE_EQUAL)
 
         # Send least stale generation ID
         failed_role_request(self, ofp.OFPCR_ROLE_MASTER,
@@ -218,8 +236,11 @@ class RolePermissions(base_tests.SimpleDataPlane):
 
         simple_role_request(self, ofp.OFPCR_ROLE_SLAVE, gen)
         self.verify_permission(False)
-
-        simple_role_request(self, ofp.OFPCR_ROLE_EQUAL)
+        
+        if (config["correction"]):
+            simple_role_request(self, ofp.OFPCR_ROLE_EQUAL, gen)
+        else:
+            simple_role_request(self, ofp.OFPCR_ROLE_EQUAL)
         self.verify_permission(True)
 
     def verify_permission(self, perm):

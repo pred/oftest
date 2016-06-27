@@ -10,6 +10,7 @@ import struct
 import loxi
 import util
 import loxi.generic_util
+from oftest import config
 
 import sys
 ofp = sys.modules['loxi.of10']
@@ -4630,7 +4631,7 @@ class flow_add(flow_mod):
         if buffer_id != None:
             self.buffer_id = buffer_id
         else:
-            self.buffer_id = 0
+            self.buffer_id = 0xffffffff
         if out_port != None:
             self.out_port = out_port
         else:

@@ -1,0 +1,91 @@
+16:15:19.318  root      : INFO    : ++++++++ Tue Jun 21 16:15:19 2016 ++++++++
+16:15:19.397  scapy.runtime: WARNING : No route found for IPv6 destination :: (no default route?)
+16:15:19.414  root      : INFO    : Importing platform: eth
+16:15:19.414  root      : DEBUG   : Configuration: {'xunit_dir': 'xunit', 'disable_ipv6': False, 'correction': True, 'minsize': 0, 'list_test_names': False, 'switch_ip': None, 'controller_host': '192.168.2.1', 'allow_user': False, 'default_negative_timeout': 0.01, 'platform': 'eth', 'log_dir': None, 'xunit': False, 'random_order': False, 'platform_dir': '/home/madynes/OFTest/oftest/platforms', 'profile': False, 'default_timeout': 2.0, 'platform_args': None, 'relax': False, 'interfaces': [(3, 'eth11'), (2, 'eth12'), (4, 'eth13')], 'port_map': {2: 'eth12', 3: 'eth11', 4: 'eth13'}, 'debug': 'verbose', 'openflow_version': '1.3', 'controller_port': 6633, 'test_file': None, 'profile_file': 'profile.out', 'fail_skipped': False, 'test_params': 'None', 'test_dir': '/home/madynes/OFTest/oftest/tests-1.3', 'list': False, 'test_spec': '', 'random_seed': None, 'log_file': 'oft.log'}
+16:15:19.414  root      : INFO    : OF port map: {2: 'eth12', 3: 'eth11', 4: 'eth13'}
+16:15:19.414  root      : INFO    : Autogen random seed: 20031445
+16:15:19.419  root      : INFO    : *** TEST RUN START: Tue Jun 21 16:15:19 2016
+16:15:19.419  root      : INFO    : ** START TEST CASE match.EthSrcBroadcast
+16:15:19.419  controller: INFO    : Create/listen at 192.168.2.1:6633
+16:15:21.606  controller: INFO    : 192.168.2.1:6633: Incoming connection from ('192.168.2.10', 37105)
+16:15:21.606  controller: DEBUG   : Msg out: version 4 class hello len 8 xid 2194014789
+16:15:21.607  controller: DEBUG   : Msg in: version 4 class hello len 16 xid 1584
+16:15:21.644  root      : INFO    : Connected ('192.168.2.10', 37105)
+16:15:21.644  controller: DEBUG   : Running transaction 4197524429
+16:15:21.644  controller: DEBUG   : Msg out: version 4 class features_request len 8 xid 4197524429
+16:15:21.644  controller: DEBUG   : Waiting for transaction 4197524429
+16:15:21.648  controller: DEBUG   : Msg in: version 4 class features_reply len 32 xid 4197524429
+16:15:21.648  controller: DEBUG   : Matched expected XID 4197524429
+16:15:21.660  root      : INFO    : Running match test for match_v3 { oxm_list = [ eth_src { value = ff:ff:ff:ff:ff:ff } ] }
+16:15:21.660  root      : INFO    : Deleting all flows
+16:15:21.660  controller: DEBUG   : Msg out: version 4 class flow_delete len 56 xid 1753897851
+16:15:21.661  controller: DEBUG   : Running transaction 1445644376
+16:15:21.661  controller: DEBUG   : Msg out: version 4 class barrier_request len 8 xid 1445644376
+16:15:21.661  controller: DEBUG   : Waiting for transaction 1445644376
+16:15:21.663  controller: DEBUG   : Msg in: version 4 class barrier_reply len 8 xid 1445644376
+16:15:21.663  controller: DEBUG   : Matched expected XID 1445644376
+16:15:21.664  root      : INFO    : Inserting flow sending matching packets to port 3
+16:15:21.665  controller: DEBUG   : Msg out: version 4 class flow_add len 88 xid 1317611786
+16:15:21.665  root      : INFO    : Inserting match-all flow sending packets to controller
+16:15:21.665  controller: DEBUG   : Msg out: version 4 class flow_add len 80 xid 517040811
+16:15:21.665  controller: DEBUG   : Running transaction 931198924
+16:15:21.665  controller: DEBUG   : Msg out: version 4 class barrier_request len 8 xid 931198924
+16:15:21.665  controller: DEBUG   : Waiting for transaction 931198924
+16:15:21.672  controller: DEBUG   : Msg in: version 4 class barrier_reply len 8 xid 931198924
+16:15:21.672  controller: DEBUG   : Matched expected XID 931198924
+16:15:21.672  root      : INFO    : Sending matching packet 'ff:ff:ff:ff:ff:ff', expecting output to port 3
+16:15:21.673  root      : INFO    : <Ether  dst=00:01:02:03:04:05 src=ff:ff:ff:ff:ff:ff type=0x800 |<IP  ihl=None tos=0x0 frag=0 ttl=64 proto=tcp src=192.168.0.1 dst=192.168.0.2 |<TCP  sport=1234 dport=http flags=S |<Raw  load='DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD' |>>>>
+16:15:21.674  dataplane : DEBUG   : Sending 100 bytes to port 2
+16:15:21.674  dataplane : INFO    : sending 100 100 2
+16:15:21.674  root      : DEBUG   : Negative check for pkt on port 2
+16:15:21.674  dataplane : DEBUG   : Grabbing packet
+16:15:21.675  dataplane : DEBUG   : Out of packets on port 2
+16:15:21.675  dataplane : DEBUG   : Did not find packet
+16:15:21.677  dataplane : DEBUG   : Pkt len 102 in on port 3
+16:15:21.678  dataplane : DEBUG   : Grabbing packet
+16:15:21.678  dataplane : DEBUG   : Out of packets on port 2
+16:15:21.678  dataplane : DEBUG   : Did not find packet
+16:15:21.685  dataplane : DEBUG   : Poll time out, no packet from 2
+16:15:21.685  root      : DEBUG   : Checking for pkt on port 3
+16:15:21.685  dataplane : DEBUG   : Grabbing packet
+16:15:21.685  dataplane : DEBUG   : Checking packet from port 3
+16:15:21.685  root      : DEBUG   : Negative check for pkt on port 4
+16:15:21.685  dataplane : DEBUG   : Grabbing packet
+16:15:21.685  dataplane : DEBUG   : Out of packets on port 4
+16:15:21.685  dataplane : DEBUG   : Did not find packet
+16:15:21.695  dataplane : DEBUG   : Poll time out, no packet from 4
+16:15:21.695  root      : DEBUG   : Checking for unexpected packets on all ports
+16:15:21.695  dataplane : DEBUG   : Grabbing packet
+16:15:21.695  dataplane : DEBUG   : Out of packets on all ports
+16:15:21.696  dataplane : DEBUG   : Did not find packet
+16:15:21.706  dataplane : DEBUG   : Poll time out, no packet from None
+16:15:21.706  root      : INFO    : Sending non-matching packet 'ff:fe:ff:ff:ff:ff', expecting packet-in
+16:15:21.707  root      : INFO    : <Ether  dst=00:01:02:03:04:05 src=ff:fe:ff:ff:ff:ff type=0x800 |<IP  ihl=None tos=0x0 frag=0 ttl=64 proto=tcp src=192.168.0.1 dst=192.168.0.2 |<TCP  sport=1234 dport=http flags=S |<Raw  load='DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD' |>>>>
+16:15:21.707  dataplane : DEBUG   : Sending 100 bytes to port 2
+16:15:21.707  dataplane : INFO    : sending 100 100 2
+16:15:21.707  controller: DEBUG   : Polling for packet_in
+16:15:21.707  controller: DEBUG   : packet_in message not in queue
+16:15:21.710  controller: DEBUG   : Msg in: version 4 class packet_in len 142 xid 0
+16:15:21.711  controller: DEBUG   : Got packet_in message
+16:15:21.711  root      : INFO    : Sending non-matching packet 'fd:ff:ff:ff:ff:ff', expecting packet-in
+16:15:21.712  root      : INFO    : <Ether  dst=00:01:02:03:04:05 src=fd:ff:ff:ff:ff:ff type=0x800 |<IP  ihl=None tos=0x0 frag=0 ttl=64 proto=tcp src=192.168.0.1 dst=192.168.0.2 |<TCP  sport=1234 dport=http flags=S |<Raw  load='DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD' |>>>>
+16:15:21.712  dataplane : DEBUG   : Sending 100 bytes to port 2
+16:15:21.712  dataplane : INFO    : sending 100 100 2
+16:15:21.712  controller: DEBUG   : Polling for packet_in
+16:15:21.712  controller: DEBUG   : packet_in message not in queue
+16:15:21.714  controller: DEBUG   : Msg in: version 4 class packet_in len 142 xid 0
+16:15:21.715  controller: DEBUG   : Got packet_in message
+16:15:21.715  root      : INFO    : Sending non-matching packet 'fe:ff:ff:ff:ff:ff', expecting packet-in
+16:15:21.716  root      : INFO    : <Ether  dst=00:01:02:03:04:05 src=fe:ff:ff:ff:ff:ff type=0x800 |<IP  ihl=None tos=0x0 frag=0 ttl=64 proto=tcp src=192.168.0.1 dst=192.168.0.2 |<TCP  sport=1234 dport=http flags=S |<Raw  load='DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD' |>>>>
+16:15:21.716  dataplane : DEBUG   : Sending 100 bytes to port 2
+16:15:21.716  dataplane : INFO    : sending 100 100 2
+16:15:21.716  controller: DEBUG   : Polling for packet_in
+16:15:21.716  controller: DEBUG   : packet_in message not in queue
+16:15:21.718  controller: DEBUG   : Msg in: version 4 class packet_in len 142 xid 0
+16:15:21.720  controller: DEBUG   : Got packet_in message
+16:15:21.720  controller: INFO    : Exiting controller thread
+16:15:21.720  controller: INFO    : Ignoring listen soc shutdown error
+16:15:21.720  controller: INFO    : Ignoring listen soc shutdown error
+16:15:21.720  root      : INFO    : ** END TEST CASE match.EthSrcBroadcast
+16:15:21.720  root      : INFO    : *** TEST RUN END  : Tue Jun 21 16:15:21 2016
+16:15:21.721  dataplane : INFO    : Thread exit

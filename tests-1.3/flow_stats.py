@@ -106,6 +106,8 @@ class AllFlowStats(base_tests.SimpleDataPlane):
             self.assertEqual(entry.priority, flow.priority)
             self.assertEqual(entry.idle_timeout, flow.idle_timeout)
             self.assertEqual(entry.hard_timeout, flow.hard_timeout)
+            print(entry.flags)
+            print(flow.flags)
             self.assertEqual(entry.flags, flow.flags)
             self.assertEqual(entry.cookie, flow.cookie)
             self.assertEqual(sorted(entry.match.oxm_list), sorted(flow.match.oxm_list))

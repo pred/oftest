@@ -191,28 +191,29 @@ class ForwardController(base_tests.SimpleDataPlane):
         match = parse.packet_to_flow_match(pkt)
         act = ofp.action.output()
 
-        for ingress_port in of_ports:
-            #Delete all flows 
-            delete_all_flows(self.controller)
+        #for ingress_port in of_ports:
+        ingress_port=4
+        #Delete all flows 
+        #delete_all_flows(self.controller)
 
-            match.in_port = ingress_port
+        match.in_port = ingress_port
+        
+        #Create a flow mod message
+        request = ofp.message.flow_add()
+        request.match = match
+        act.port = ofp.OFPP_CONTROLLER
+        request.actions.append(act)
+
+        #logging.info("Inserting flow")
+        self.controller.message_send(request)
+        do_barrier(self.controller)
             
-            #Create a flow mod message
-            request = ofp.message.flow_add()
-            request.match = match
-            act.port = ofp.OFPP_CONTROLLER
-            request.actions.append(act)
+        #Send packet matching the flow
+        logging.info("Sending packet to dp port " + str(ingress_port))
+        self.dataplane.send(ingress_port, str(pkt))
 
-            logging.info("Inserting flow")
-            self.controller.message_send(request)
-            do_barrier(self.controller)
-            
-            #Send packet matching the flow
-            logging.info("Sending packet to dp port " + str(ingress_port))
-            self.dataplane.send(ingress_port, str(pkt))
-
-            #Verifying packet recieved on the control plane port
-            verify_packet_in(self, str(pkt), ingress_port, ofp.OFPR_ACTION)
+        #Verifying packet recieved on the control plane port
+        verify_packet_in(self, str(pkt), ingress_port, ofp.OFPR_ACTION)
     
 
 

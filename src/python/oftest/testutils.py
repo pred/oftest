@@ -1523,6 +1523,7 @@ def packet_in_match(msg, data, in_port=None, reason=None):
     @param reason Expected packet_in reason, or None
     """
 
+    
     if ofp.OFP_VERSION <= 2:
         pkt_in_port = msg.in_port
     else:
@@ -1540,7 +1541,7 @@ def packet_in_match(msg, data, in_port=None, reason=None):
     if reason != None and reason != msg.reason:
         logging.debug("Incorrect packet_in reason (expected %d, received %d)", reason, msg.reason)
         return False
-
+    
     # Check that one of the packets is a prefix of the other.
     # The received packet may be either truncated or padded, but not both.
     # (Some of the padding may be truncated but that's irrelevant). We
@@ -1552,8 +1553,9 @@ def packet_in_match(msg, data, in_port=None, reason=None):
         logging.debug("Incorrect packet_in data")
         logging.debug("Expected %s" % format_packet(data[:compare_len]))
         logging.debug("Received %s" % format_packet(msg.data[:compare_len]))
+        
         return False
-
+        
     return True
 
 def verify_packet_in(test, data, in_port, reason, controller=None):
@@ -1577,6 +1579,7 @@ def verify_packet_in(test, data, in_port, reason, controller=None):
 
     while True:
         msg, _ = controller.poll(ofp.OFPT_PACKET_IN, end_time - time.time())
+      
         if not msg:
             # Timeout
             break

@@ -10,6 +10,7 @@ import struct
 import loxi
 import util
 import loxi.generic_util
+from oftest import config
 
 import sys
 ofp = sys.modules['loxi.of13']
@@ -628,12 +629,13 @@ class async_get_request(message):
         packed.append(struct.pack("!B", self.type))
         packed.append(struct.pack("!H", 0)) # placeholder for length at index 2
         packed.append(struct.pack("!L", self.xid))
-        packed.append(struct.pack("!L", self.packet_in_mask_equal_master))
-        packed.append(struct.pack("!L", self.packet_in_mask_slave))
-        packed.append(struct.pack("!L", self.port_status_mask_equal_master))
-        packed.append(struct.pack("!L", self.port_status_mask_slave))
-        packed.append(struct.pack("!L", self.flow_removed_mask_equal_master))
-        packed.append(struct.pack("!L", self.flow_removed_mask_slave))
+        if (config["correction"] == False):
+            packed.append(struct.pack("!L", self.packet_in_mask_equal_master))
+            packed.append(struct.pack("!L", self.packet_in_mask_slave))
+            packed.append(struct.pack("!L", self.port_status_mask_equal_master))
+            packed.append(struct.pack("!L", self.port_status_mask_slave))
+            packed.append(struct.pack("!L", self.flow_removed_mask_equal_master))
+            packed.append(struct.pack("!L", self.flow_removed_mask_slave))
         length = sum([len(x) for x in packed])
         packed[2] = struct.pack("!H", length)
         return ''.join(packed)

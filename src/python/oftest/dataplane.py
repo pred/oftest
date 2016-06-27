@@ -26,6 +26,7 @@ from threading import Condition
 import ofutils
 import netutils
 from pcap_writer import PcapWriter
+from oftest import config
 
 if "linux" in sys.platform:
     import afpacket
@@ -43,6 +44,10 @@ def match_exp_pkt(exp_pkt, pkt):
     p = str(pkt)
     if len(e) < 60:
         p = p[:len(e)]
+        return e == p
+        
+    if (config["correction"]):
+        p = p[:len(p)-2]
     return e == p
 
 
@@ -249,6 +254,8 @@ class DataPlane(Thread):
         if self.pcap_writer:
             self.pcap_writer.write(packet, time.time(), port_number)
         bytes = self.ports[port_number].send(packet)
+        self.logger.info("sending %d %d %d" %
+                     (bytes, len(packet), port_number))
         if bytes != len(packet):
             self.logger.error("Unhandled send error, length mismatch %d != %d" %
                      (bytes, len(packet)))

@@ -93,6 +93,7 @@ CONFIG_DEFAULT = {
     "random_seed"        : None,
     "disable_ipv6"       : False,
     "random_order"       : False,
+    "correction"		 : False,
 
     # Other configuration
     "port_map"           : {},
@@ -184,6 +185,7 @@ prefixing them with the '^' character.
                       help="Debug lvl: debug, info, warning, error, critical (default %default)")
     group.add_option("-v", "--verbose", action="store_const", dest="debug",
                      const="verbose", help="Shortcut for --debug=verbose")
+    group.add_option("--correction", action="store_true", help="Enable OFtest corrections")
     group.add_option("-q", "--quiet", action="store_const", dest="debug",
                      const="warning", help="Shortcut for --debug=warning")
     group.add_option("--profile", action="store_true", help="Enable Python profiling")
@@ -565,6 +567,7 @@ if __name__ == "__main__":
     oftest.dataplane_instance = oftest.dataplane.DataPlane(config)
     pcap_setup(config)
     for of_port, ifname in config["port_map"].items():
+        
         oftest.dataplane_instance.port_add(ifname, of_port)
 
     logging.info("*** TEST RUN START: " + time.asctime())
