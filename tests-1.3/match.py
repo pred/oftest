@@ -76,8 +76,6 @@ class MatchTest(base_tests.SimpleDataPlane):
         for name, pkt in matching.items():
             logging.info("Sending matching packet %s, expecting output to port %d", repr(name), out_port)
             logging.info("%s",repr(pkt))
-            #print(in_port)
-            #print(out_port)
             pktstr = str(pkt)
             self.dataplane.send(in_port, pktstr)
             verify_packets(self, pktstr, [out_port])

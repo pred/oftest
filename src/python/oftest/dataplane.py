@@ -46,7 +46,7 @@ def match_exp_pkt(exp_pkt, pkt):
         p = p[:len(e)]
         return e == p
         
-    if (config["correction"]):
+    if (config["noTrailer"]):
         p = p[:len(p)-2]
     return e == p
 
