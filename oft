@@ -93,8 +93,9 @@ CONFIG_DEFAULT = {
     "random_seed"        : None,
     "disable_ipv6"       : False,
     "random_order"       : False,
-    "correction"		 : False,
-    "noTrailer"		     : False,
+    "correction"         : False,
+    "noTrailer"          : False,
+    "fuzzer"             : False,
 
     # Other configuration
     "port_map"           : {},
@@ -188,6 +189,7 @@ prefixing them with the '^' character.
                      const="verbose", help="Shortcut for --debug=verbose")
     group.add_option("--correction", action="store_true", help="Enable OFtest corrections")
     group.add_option("--noTrailer", action="store_true", help="Ignore two last bytes of any packets comming from the switch")
+    group.add_option("--fuzzer", action="store_true", help="Enable fuzzer")
     group.add_option("-q", "--quiet", action="store_const", dest="debug",
                      const="warning", help="Shortcut for --debug=warning")
     group.add_option("--profile", action="store_true", help="Enable Python profiling")
