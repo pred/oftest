@@ -9,7 +9,7 @@ import sys
 ofp = sys.modules['loxi.of13']
 
 
-class message(loxi.OFObject):
+class fuzzer(loxi.OFObject):
     subtypes = {}
 
     version = 4
@@ -38,11 +38,11 @@ class message(loxi.OFObject):
     @staticmethod
     def unpack(reader):
         subtype, = reader.peek('B', 1)
-        subclass = message.subtypes.get(subtype)
+        subclass = fuzzer.subtypes.get(subtype)
         if subclass:
             return subclass.unpack(reader)
 
-        obj = message()
+        obj = fuzzer()
         _version = reader.read("!B")[0]
         assert (_version == 4)
         obj.type = reader.read("!B")[0]
@@ -62,7 +62,7 @@ class message(loxi.OFObject):
         return True
 
     def pretty_print(self, q):
-        q.text("message {")
+        q.text("fuzzer {")
         with q.group():
             with q.indent(2):
                 q.breakable()
@@ -75,7 +75,7 @@ class message(loxi.OFObject):
         q.text('}')
 
 
-class stats_reply(message):
+class stats_reply(fuzzer):
     subtypes = {}
 
     version = 4
@@ -159,7 +159,7 @@ class stats_reply(message):
         q.text('}')
 
 
-message.subtypes[19] = stats_reply
+fuzzer.subtypes[19] = stats_reply
 
 
 class aggregate_stats_reply(stats_reply):
@@ -276,7 +276,7 @@ class aggregate_stats_reply(stats_reply):
 stats_reply.subtypes[2] = aggregate_stats_reply
 
 
-class stats_request(message):
+class stats_request(fuzzer):
     subtypes = {}
 
     version = 4
@@ -360,7 +360,7 @@ class stats_request(message):
         q.text('}')
 
 
-message.subtypes[18] = stats_request
+fuzzer.subtypes[18] = stats_request
 
 
 class aggregate_stats_request(stats_request):
@@ -516,7 +516,7 @@ class aggregate_stats_request(stats_request):
 stats_request.subtypes[2] = aggregate_stats_request
 
 
-class async_get_reply(message):
+class async_get_reply(fuzzer):
     version = 4
     type = 27
 
@@ -645,10 +645,10 @@ class async_get_reply(message):
         q.text('}')
 
 
-message.subtypes[27] = async_get_reply
+fuzzer.subtypes[27] = async_get_reply
 
 
-class async_get_request(message):
+class async_get_request(fuzzer):
     version = 4
     type = 26
 
@@ -778,10 +778,10 @@ class async_get_request(message):
         q.text('}')
 
 
-message.subtypes[26] = async_get_request
+fuzzer.subtypes[26] = async_get_request
 
 
-class async_set(message):
+class async_set(fuzzer):
     version = 4
     type = 28
 
@@ -910,10 +910,10 @@ class async_set(message):
         q.text('}')
 
 
-message.subtypes[28] = async_set
+fuzzer.subtypes[28] = async_set
 
 
-class error_msg(message):
+class error_msg(fuzzer):
     subtypes = {}
 
     version = 4
@@ -983,7 +983,7 @@ class error_msg(message):
         q.text('}')
 
 
-message.subtypes[1] = error_msg
+fuzzer.subtypes[1] = error_msg
 
 
 class bad_action_error_msg(error_msg):
@@ -1330,7 +1330,7 @@ class bad_request_error_msg(error_msg):
 error_msg.subtypes[1] = bad_request_error_msg
 
 
-class barrier_reply(message):
+class barrier_reply(fuzzer):
     version = 4
     type = 21
 
@@ -1385,10 +1385,10 @@ class barrier_reply(message):
         q.text('}')
 
 
-message.subtypes[21] = barrier_reply
+fuzzer.subtypes[21] = barrier_reply
 
 
-class barrier_request(message):
+class barrier_request(fuzzer):
     version = 4
     type = 20
 
@@ -1443,10 +1443,10 @@ class barrier_request(message):
         q.text('}')
 
 
-message.subtypes[20] = barrier_request
+fuzzer.subtypes[20] = barrier_request
 
 
-class experimenter(message):
+class experimenter(fuzzer):
     subtypes = {}
 
     version = 4
@@ -1540,7 +1540,7 @@ class experimenter(message):
         q.text('}')
 
 
-message.subtypes[4] = experimenter
+fuzzer.subtypes[4] = experimenter
 
 
 class bsn_header(experimenter):
@@ -3222,7 +3222,7 @@ class desc_stats_request(stats_request):
 stats_request.subtypes[0] = desc_stats_request
 
 
-class echo_reply(message):
+class echo_reply(fuzzer):
     version = 4
     type = 3
 
@@ -3289,10 +3289,10 @@ class echo_reply(message):
         q.text('}')
 
 
-message.subtypes[3] = echo_reply
+fuzzer.subtypes[3] = echo_reply
 
 
-class echo_request(message):
+class echo_request(fuzzer):
 
     def __init__(self, xid=None, data=None, version=4, type=2, length=None):
         if xid is not None:
@@ -3372,10 +3372,10 @@ class echo_request(message):
         q.text('}')
 
 
-message.subtypes[2] = echo_request
+fuzzer.subtypes[2] = echo_request
 
 
-class features_reply(message):
+class features_reply(fuzzer):
     version = 4
     type = 6
 
@@ -3505,10 +3505,10 @@ class features_reply(message):
         q.text('}')
 
 
-message.subtypes[6] = features_reply
+fuzzer.subtypes[6] = features_reply
 
 
-class features_request(message):
+class features_request(fuzzer):
     version = 4
     type = 5
 
@@ -3563,10 +3563,10 @@ class features_request(message):
         q.text('}')
 
 
-message.subtypes[5] = features_request
+fuzzer.subtypes[5] = features_request
 
 
-class flow_mod(message):
+class flow_mod(fuzzer):
     subtypes = {}
 
     version = 4
@@ -3784,7 +3784,7 @@ class flow_mod(message):
         q.text('}')
 
 
-message.subtypes[14] = flow_mod
+fuzzer.subtypes[14] = flow_mod
 
 
 class flow_add(flow_mod):
@@ -4895,7 +4895,7 @@ class flow_modify_strict(flow_mod):
 flow_mod.subtypes[2] = flow_modify_strict
 
 
-class flow_removed(message):
+class flow_removed(fuzzer):
     version = 4
     type = 11
 
@@ -5084,7 +5084,7 @@ class flow_removed(message):
         q.text('}')
 
 
-message.subtypes[11] = flow_removed
+fuzzer.subtypes[11] = flow_removed
 
 
 class flow_stats_reply(stats_reply):
@@ -5319,7 +5319,7 @@ class flow_stats_request(stats_request):
 stats_request.subtypes[1] = flow_stats_request
 
 
-class get_config_reply(message):
+class get_config_reply(fuzzer):
     version = 4
     type = 8
 
@@ -5398,10 +5398,10 @@ class get_config_reply(message):
         q.text('}')
 
 
-message.subtypes[8] = get_config_reply
+fuzzer.subtypes[8] = get_config_reply
 
 
-class get_config_request(message):
+class get_config_request(fuzzer):
     version = 4
     type = 7
 
@@ -5456,10 +5456,10 @@ class get_config_request(message):
         q.text('}')
 
 
-message.subtypes[7] = get_config_request
+fuzzer.subtypes[7] = get_config_request
 
 
-class group_mod(message):
+class group_mod(fuzzer):
     subtypes = {}
 
     version = 4
@@ -5567,7 +5567,7 @@ class group_mod(message):
         q.text('}')
 
 
-message.subtypes[15] = group_mod
+fuzzer.subtypes[15] = group_mod
 
 
 class group_add(group_mod):
@@ -6548,7 +6548,7 @@ class group_stats_request(stats_request):
 stats_request.subtypes[6] = group_stats_request
 
 
-class hello(message):
+class hello(fuzzer):
     version = 4
     type = 0
 
@@ -6612,7 +6612,7 @@ class hello(message):
         q.text('}')
 
 
-message.subtypes[0] = hello
+fuzzer.subtypes[0] = hello
 
 
 class hello_failed_error_msg(error_msg):
@@ -7039,7 +7039,7 @@ class meter_features_stats_request(stats_request):
 stats_request.subtypes[11] = meter_features_stats_request
 
 
-class meter_mod(message):
+class meter_mod(fuzzer):
     version = 4
     type = 29
 
@@ -7136,7 +7136,7 @@ class meter_mod(message):
         q.text('}')
 
 
-message.subtypes[29] = meter_mod
+fuzzer.subtypes[29] = meter_mod
 
 
 class meter_mod_failed_error_msg(error_msg):
@@ -7469,7 +7469,7 @@ class nicira_header(experimenter):
 experimenter.subtypes[8992] = nicira_header
 
 
-class packet_in(message):
+class packet_in(fuzzer):
     version = 4
     type = 10
 
@@ -7611,10 +7611,10 @@ class packet_in(message):
         q.text('}')
 
 
-message.subtypes[10] = packet_in
+fuzzer.subtypes[10] = packet_in
 
 
-class packet_out(message):
+class packet_out(fuzzer):
     version = 4
     type = 13
 
@@ -7722,7 +7722,7 @@ class packet_out(message):
         q.text('}')
 
 
-message.subtypes[13] = packet_out
+fuzzer.subtypes[13] = packet_out
 
 
 class port_desc_stats_reply(stats_reply):
@@ -7886,7 +7886,7 @@ class port_desc_stats_request(stats_request):
 stats_request.subtypes[13] = port_desc_stats_request
 
 
-class port_mod(message):
+class port_mod(fuzzer):
     version = 4
     type = 16
 
@@ -8007,7 +8007,7 @@ class port_mod(message):
         q.text('}')
 
 
-message.subtypes[16] = port_mod
+fuzzer.subtypes[16] = port_mod
 
 
 class port_mod_failed_error_msg(error_msg):
@@ -8262,7 +8262,7 @@ class port_stats_request(stats_request):
 stats_request.subtypes[4] = port_stats_request
 
 
-class port_status(message):
+class port_status(fuzzer):
     version = 4
     type = 12
 
@@ -8339,10 +8339,10 @@ class port_status(message):
         q.text('}')
 
 
-message.subtypes[12] = port_status
+fuzzer.subtypes[12] = port_status
 
 
-class queue_get_config_reply(message):
+class queue_get_config_reply(fuzzer):
     version = 4
     type = 23
 
@@ -8423,10 +8423,10 @@ class queue_get_config_reply(message):
         q.text('}')
 
 
-message.subtypes[23] = queue_get_config_reply
+fuzzer.subtypes[23] = queue_get_config_reply
 
 
-class queue_get_config_request(message):
+class queue_get_config_request(fuzzer):
     version = 4
     type = 22
 
@@ -8495,7 +8495,7 @@ class queue_get_config_request(message):
         q.text('}')
 
 
-message.subtypes[22] = queue_get_config_request
+fuzzer.subtypes[22] = queue_get_config_request
 
 
 class queue_op_failed_error_msg(error_msg):
@@ -8763,7 +8763,7 @@ class queue_stats_request(stats_request):
 stats_request.subtypes[5] = queue_stats_request
 
 
-class role_reply(message):
+class role_reply(fuzzer):
     version = 4
     type = 25
 
@@ -8840,10 +8840,10 @@ class role_reply(message):
         q.text('}')
 
 
-message.subtypes[25] = role_reply
+fuzzer.subtypes[25] = role_reply
 
 
-class role_request(message):
+class role_request(fuzzer):
     version = 4
     type = 24
 
@@ -8924,7 +8924,7 @@ class role_request(message):
         q.text('}')
 
 
-message.subtypes[24] = role_request
+fuzzer.subtypes[24] = role_request
 
 
 class role_request_failed_error_msg(error_msg):
@@ -9009,7 +9009,7 @@ class role_request_failed_error_msg(error_msg):
 error_msg.subtypes[11] = role_request_failed_error_msg
 
 
-class set_config(message):
+class set_config(fuzzer):
     version = 4
     type = 9
 
@@ -9084,7 +9084,7 @@ class set_config(message):
         q.text('}')
 
 
-message.subtypes[9] = set_config
+fuzzer.subtypes[9] = set_config
 
 
 class switch_config_failed_error_msg(error_msg):
@@ -9419,7 +9419,7 @@ class table_features_stats_request(stats_request):
 stats_request.subtypes[12] = table_features_stats_request
 
 
-class table_mod(message):
+class table_mod(fuzzer):
     version = 4
     type = 17
 
@@ -9496,7 +9496,7 @@ class table_mod(message):
         q.text('}')
 
 
-message.subtypes[17] = table_mod
+fuzzer.subtypes[17] = table_mod
 
 
 class table_mod_failed_error_msg(error_msg):
@@ -9750,4 +9750,4 @@ def parse_message(buf):
         raise loxi.ProtocolError("wrong OpenFlow version (expected %d, got %d)" % (ofp.OFP_VERSION, msg_ver))
     if len(buf) != msg_len:
         raise loxi.ProtocolError("incorrect message size")
-    return message.unpack(loxi.generic_util.OFReader(buf))
+    return fuzzer.unpack(loxi.generic_util.OFReader(buf))

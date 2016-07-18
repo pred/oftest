@@ -26,8 +26,8 @@ class Echo(base_tests.SimpleProtocol):
     def runTest(self):
         request = ofp.message.echo_request()
         response, pkt = self.controller.transact(request)
-        if fuzzer:
-            request = ofp.fuzzer.echo_request(length=150)
+        if config["fuzzer"]:
+            request = ofp.fuzzer.echo_request()
             response, pkt = self.controller.transact(request)
         self.assertTrue(response is not None,
                         "Did not get echo reply")

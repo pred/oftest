@@ -16,6 +16,7 @@ import instruction_id
 import action
 import message
 import action_id
+import fuzzer
 from const import *
 from common import *
 from loxi import ProtocolError
