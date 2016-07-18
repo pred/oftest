@@ -151,4 +151,8 @@ Currently the keys used control whether VLAN tagged packets are used and whether
     vid=N: Use tagged packets with VLAN id of N
     strip_vlan=bool: If True, add the strip VLAN tag action to the packet test
 
+We have introduced two new options : --correction and --noTrailer.
+The --correction option allows the user to apply all corrections we provide that are not related to the switch.
+The --noTrailer option allows the OFtest library to disregard the two last bytes of all packets coming from the switch, as our switch adds a trailer with information like exiting port or checksum that are not taken into account by OFtest.
+
 ---
