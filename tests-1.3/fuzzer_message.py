@@ -11,6 +11,7 @@ import time
 
 from oftest.testutils import *
 
+
 class stats_request(message):
     subtypes = {}
 
@@ -18,15 +19,15 @@ class stats_request(message):
     type = 18
 
     def __init__(self, xid=None, stats_type=None, flags=None):
-        if xid != None:
+        if xid is not None:
             self.xid = xid
         else:
             self.xid = None
-        if stats_type != None:
+        if stats_type is not None:
             self.stats_type = stats_type
         else:
             self.stats_type = 0
-        if flags != None:
+        if flags is not None:
             self.flags = flags
         else:
             self.flags = 0
@@ -36,7 +37,7 @@ class stats_request(message):
         packed = []
         packed.append(struct.pack("!B", self.version))
         packed.append(struct.pack("!B", self.type))
-        packed.append(struct.pack("!H", 0)) # placeholder for length at index 2
+        packed.append(struct.pack("!H", 0))  # placeholder for length
         packed.append(struct.pack("!L", self.xid))
         packed.append(struct.pack("!H", self.stats_type))
         packed.append(struct.pack("!H", self.flags))
@@ -67,10 +68,14 @@ class stats_request(message):
         return obj
 
     def __eq__(self, other):
-        if type(self) != type(other): return False
-        if self.xid != other.xid: return False
-        if self.stats_type != other.stats_type: return False
-        if self.flags != other.flags: return False
+        if type(self) != type(other):
+            return False
+        if self.xid != other.xid:
+            return False
+        if self.stats_type != other.stats_type:
+            return False
+        if self.flags != other.flags:
+            return False
         return True
 
     def pretty_print(self, q):
@@ -78,13 +83,14 @@ class stats_request(message):
         with q.group():
             with q.indent(2):
                 q.breakable()
-                q.text("xid = ");
-                if self.xid != None:
+                q.text("xid = ")
+                if self.xid is not None:
                     q.text("%#x" % self.xid)
                 else:
                     q.text('None')
-                q.text(","); q.breakable()
-                q.text("flags = ");
+                q.text(",")
+                q.breakable()
+                q.text("flags = ")
                 q.text("%#x" % self.flags)
             q.breakable()
         q.text('}')

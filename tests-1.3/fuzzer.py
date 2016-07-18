@@ -10,4 +10,3 @@ import ofp
 import time
 
 from oftest.testutils import *
-
