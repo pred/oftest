@@ -28,17 +28,15 @@ class Echo(base_tests.SimpleProtocol):
     def runTest(self):
         request = ofp.message.echo_request()
         response, pkt = self.controller.transact(request)
-        if config["fuzzer"]:
-            for i in range (0,1000):
-                request = ofp.fuzzer.echo_request()
-                response, pkt = self.controller.transact(request)
-                 self.assertTrue(response is not None,
-                          "Did not get echo reply")
-                self.assertEqual(response.type, ofp.OFPT_ECHO_REPLY,
-                            'response is not echo_reply')
-                self.assertEqual(request.xid, response.xid,
-                             'response xid != request xid')
-                self.assertEqual(len(response.data), 0, 'response data non-empty')
+        request = ofp.fuzzer.echo_request()
+        response, pkt = self.controller.transact(request)
+        self.assertTrue(response is not None,
+                        "Did not get echo reply")
+        self.assertEqual(response.type, ofp.OFPT_ECHO_REPLY,
+                        'response is not echo_reply')
+        self.assertEqual(request.xid, response.xid,
+                        'response xid != request xid')
+        self.assertEqual(len(response.data), 0, 'response data non-empty')
 
 
 class EchoWithData(base_tests.SimpleProtocol):
