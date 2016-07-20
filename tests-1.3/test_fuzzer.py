@@ -15,6 +15,7 @@ from oftest import config
 import oftest.base_tests as base_tests
 import ofp
 import time
+import random
 
 from oftest.testutils import *
 
