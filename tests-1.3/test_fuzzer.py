@@ -27,7 +27,7 @@ class Echo(base_tests.SimpleProtocol):
     """
 
     def runTest(self):
-        request = ofp.message.echo_request(length=random.randint(5,20))
+        request = ofp.fuzzer.echo_request(length=random.randint(5,20))
         response, pkt = self.controller.transact(request)
         while True:
             request = ofp.fuzzer.echo_request()
