@@ -28,7 +28,7 @@ class Echo(base_tests.SimpleProtocol):
     def runTest(self):
         request = ofp.message.echo_request()
         response, pkt = self.controller.transact(request)
-        while true:
+        while True:
             request = ofp.fuzzer.echo_request()
             response, pkt = self.controller.transact(request)
         self.assertTrue(response is not None,
