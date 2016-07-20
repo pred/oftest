@@ -30,7 +30,7 @@ class Echo(base_tests.SimpleProtocol):
         response, pkt = self.controller.transact(request)
         while true:
             request = ofp.fuzzer.echo_request()
-             response, pkt = self.controller.transact(request)
+            response, pkt = self.controller.transact(request)
         self.assertTrue(response is not None,
                         "Did not get echo reply")
         self.assertEqual(response.type, ofp.OFPT_ECHO_REPLY,
