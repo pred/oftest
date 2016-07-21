@@ -14,7 +14,7 @@ class fuzzer(loxi.OFObject):
 
     version = 4
 
-    def __init__(self, type=None, xid=None):
+    def __init__(self, type=None, xid=None, length=None):
         if type is not None:
             self.type = type
         else:
@@ -23,6 +23,10 @@ class fuzzer(loxi.OFObject):
             self.xid = xid
         else:
             self.xid = None
+        if length is not None:
+            self.length = length
+        else:
+            self.length = None
         return
 
     def pack(self):
@@ -31,8 +35,11 @@ class fuzzer(loxi.OFObject):
         packed.append(struct.pack("!B", self.type))
         packed.append(struct.pack("!H", 0))  # placeholder for length at index 2
         packed.append(struct.pack("!L", self.xid))
-        length = sum([len(x) for x in packed])
-        packed[2] = struct.pack("!H", length)
+        if self.length is not None:
+            packed[2] = struct.pack("!H", self.length)
+        else:
+            length = sum([len(x) for x in packed])
+            packed[2] = struct.pack("!H", length)
         return ''.join(packed)
 
     @staticmethod
@@ -78,7 +85,7 @@ class fuzzer(loxi.OFObject):
 class multipart_request(fuzzer):
     subtypes = {}
 
-    def __init__(self, xid=None, stats_type=None, flags=None, version=None, type=None):
+    def __init__(self, xid=None, stats_type=None, flags=None, version=None, type=None, length=None):
         if xid is not None:
             self.xid = xid
         else:
@@ -99,6 +106,10 @@ class multipart_request(fuzzer):
             self.type = type
         else:
             self.type = 18
+        if length is not None:
+            self.length = length
+        else:
+            self.length = None
         return
 
     def pack(self):
@@ -110,8 +121,11 @@ class multipart_request(fuzzer):
         packed.append(struct.pack("!H", self.stats_type))
         packed.append(struct.pack("!H", self.flags))
         packed.append('\x00' * 4)
-        length = sum([len(x) for x in packed])
-        packed[2] = struct.pack("!H", length)
+        if self.length is not None:
+            packed[2] = struct.pack("!H", self.length)
+        else:
+            length = sum([len(x) for x in packed])
+            packed[2] = struct.pack("!H", length)
         return ''.join(packed)
 
     @staticmethod
@@ -173,7 +187,7 @@ class stats_request(fuzzer):
     version = 4
     type = 18
 
-    def __init__(self, xid=None, stats_type=None, flags=None):
+    def __init__(self, xid=None, stats_type=None, flags=None, length=None):
         if xid is not None:
             self.xid = xid
         else:
@@ -186,6 +200,10 @@ class stats_request(fuzzer):
             self.flags = flags
         else:
             self.flags = 0
+        if length is not None:
+            self.length = length
+        else:
+            self.length = None
         return
 
     def pack(self):
@@ -197,8 +215,11 @@ class stats_request(fuzzer):
         packed.append(struct.pack("!H", self.stats_type))
         packed.append(struct.pack("!H", self.flags))
         packed.append('\x00' * 4)
-        length = sum([len(x) for x in packed])
-        packed[2] = struct.pack("!H", length)
+        if self.length is not None:
+            packed[2] = struct.pack("!H", self.length)
+        else:
+            length = sum([len(x) for x in packed])
+            packed[2] = struct.pack("!H", length)
         return ''.join(packed)
 
     @staticmethod
@@ -260,7 +281,7 @@ class aggregate_stats_request(stats_request):
     stats_type = 2
 
     def __init__(self, xid=None, flags=None, table_id=None, out_port=None, out_group=None, cookie=None,
-                 cookie_mask=None, match=None):
+                 cookie_mask=None, match=None, length=None):
         if xid is not None:
             self.xid = xid
         else:
@@ -293,6 +314,10 @@ class aggregate_stats_request(stats_request):
             self.match = match
         else:
             self.match = ofp.match()
+        if length is not None:
+            self.length = length
+        else:
+            self.length = None
         return
 
     def pack(self):
@@ -312,8 +337,11 @@ class aggregate_stats_request(stats_request):
         packed.append(struct.pack("!Q", self.cookie))
         packed.append(struct.pack("!Q", self.cookie_mask))
         packed.append(self.match.pack())
-        length = sum([len(x) for x in packed])
-        packed[2] = struct.pack("!H", length)
+        if self.length is not None:
+            packed[2] = struct.pack("!H", self.length)
+        else:
+            length = sum([len(x) for x in packed])
+            packed[2] = struct.pack("!H", length)
         return ''.join(packed)
 
     @staticmethod
@@ -411,11 +439,15 @@ class async_get_request(fuzzer):
     version = 4
     type = 26
 
-    def __init__(self, xid=None):
+    def __init__(self, xid=None, length = None):
         if xid is not None:
             self.xid = xid
         else:
             self.xid = None
+        if length is not None:
+            self.length = length
+        else:
+            self.length = None
         return
 
     def pack(self):
@@ -424,8 +456,11 @@ class async_get_request(fuzzer):
         packed.append(struct.pack("!B", self.type))
         packed.append(struct.pack("!H", 0))  # placeholder for length at index 2
         packed.append(struct.pack("!L", self.xid))
-        length = sum([len(x) for x in packed])
-        packed[2] = struct.pack("!H", length)
+        if self.length is not None:
+            packed[2] = struct.pack("!H", self.length)
+        else:
+            length = sum([len(x) for x in packed])
+            packed[2] = struct.pack("!H", length)
         return ''.join(packed)
 
     @staticmethod
@@ -471,7 +506,7 @@ class async_set(fuzzer):
 
     def __init__(self, xid=None, packet_in_mask_equal_master=None, packet_in_mask_slave=None,
                  port_status_mask_equal_master=None, port_status_mask_slave=None, flow_removed_mask_equal_master=None,
-                 flow_removed_mask_slave=None):
+                 flow_removed_mask_slave=None, length = None):
         if xid is not None:
             self.xid = xid
         else:
@@ -500,6 +535,10 @@ class async_set(fuzzer):
             self.flow_removed_mask_slave = flow_removed_mask_slave
         else:
             self.flow_removed_mask_slave = 0
+        if length is not None:
+            self.length = length
+        else:
+            self.length = None
         return
 
     def pack(self):
@@ -514,8 +553,11 @@ class async_set(fuzzer):
         packed.append(struct.pack("!L", self.port_status_mask_slave))
         packed.append(struct.pack("!L", self.flow_removed_mask_equal_master))
         packed.append(struct.pack("!L", self.flow_removed_mask_slave))
-        length = sum([len(x) for x in packed])
-        packed[2] = struct.pack("!H", length)
+        if self.length is not None:
+            packed[2] = struct.pack("!H", self.length)
+        else:
+            length = sum([len(x) for x in packed])
+            packed[2] = struct.pack("!H", length)
         return ''.join(packed)
 
     @staticmethod
@@ -596,15 +638,20 @@ class async_set(fuzzer):
 
 fuzzer.subtypes[28] = async_set
 
+
 class barrier_request(fuzzer):
     version = 4
     type = 20
 
-    def __init__(self, xid=None):
+    def __init__(self, xid=None, length=None):
         if xid is not None:
             self.xid = xid
         else:
             self.xid = None
+        if length is not None:
+            self.length = length
+        else:
+            self.length = None
         return
 
     def pack(self):
@@ -613,8 +660,11 @@ class barrier_request(fuzzer):
         packed.append(struct.pack("!B", self.type))
         packed.append(struct.pack("!H", 0))  # placeholder for length at index 2
         packed.append(struct.pack("!L", self.xid))
-        length = sum([len(x) for x in packed])
-        packed[2] = struct.pack("!H", length)
+        if self.length is not None:
+            packed[2] = struct.pack("!H", self.length)
+        else:
+            length = sum([len(x) for x in packed])
+            packed[2] = struct.pack("!H", length)
         return ''.join(packed)
 
     @staticmethod
@@ -661,7 +711,7 @@ class experimenter_stats_request(stats_request):
     type = 18
     stats_type = 65535
 
-    def __init__(self, xid=None, flags=None, experimenter=None, subtype=None):
+    def __init__(self, xid=None, flags=None, experimenter=None, subtype=None, length=None):
         if xid is not None:
             self.xid = xid
         else:
@@ -678,6 +728,10 @@ class experimenter_stats_request(stats_request):
             self.subtype = subtype
         else:
             self.subtype = 0
+        if length is not None:
+            self.length = length
+        else:
+            self.length = None
         return
 
     def pack(self):
@@ -691,8 +745,11 @@ class experimenter_stats_request(stats_request):
         packed.append('\x00' * 4)
         packed.append(struct.pack("!L", self.experimenter))
         packed.append(struct.pack("!L", self.subtype))
-        length = sum([len(x) for x in packed])
-        packed[2] = struct.pack("!H", length)
+        if self.length is not None:
+            packed[2] = struct.pack("!H", self.length)
+        else:
+            length = sum([len(x) for x in packed])
+            packed[2] = struct.pack("!H", length)
         return ''.join(packed)
 
     @staticmethod
@@ -762,7 +819,7 @@ class desc_stats_request(stats_request):
     type = 18
     stats_type = 0
 
-    def __init__(self, xid=None, flags=None):
+    def __init__(self, xid=None, flags=None, length=None):
         if xid is not None:
             self.xid = xid
         else:
@@ -771,6 +828,10 @@ class desc_stats_request(stats_request):
             self.flags = flags
         else:
             self.flags = 0
+        if length is not None:
+            self.length = length
+        else:
+            self.length = None
         return
 
     def pack(self):
@@ -782,8 +843,11 @@ class desc_stats_request(stats_request):
         packed.append(struct.pack("!H", self.stats_type))
         packed.append(struct.pack("!H", self.flags))
         packed.append('\x00' * 4)
-        length = sum([len(x) for x in packed])
-        packed[2] = struct.pack("!H", length)
+        if self.length is not None:
+            packed[2] = struct.pack("!H", self.length)
+        else:
+            length = sum([len(x) for x in packed])
+            packed[2] = struct.pack("!H", length)
         return ''.join(packed)
 
     @staticmethod
@@ -920,11 +984,15 @@ class features_request(fuzzer):
     version = 4
     type = 5
 
-    def __init__(self, xid=None):
+    def __init__(self, xid=None, length=None):
         if xid is not None:
             self.xid = xid
         else:
             self.xid = None
+        if length is not None:
+            self.length = length
+        else:
+            self.length = None
         return
 
     def pack(self):
@@ -933,8 +1001,11 @@ class features_request(fuzzer):
         packed.append(struct.pack("!B", self.type))
         packed.append(struct.pack("!H", 0))  # placeholder for length at index 2
         packed.append(struct.pack("!L", self.xid))
-        length = sum([len(x) for x in packed])
-        packed[2] = struct.pack("!H", length)
+        if self.length is not None:
+            packed[2] = struct.pack("!H", self.length)
+        else:
+            length = sum([len(x) for x in packed])
+            packed[2] = struct.pack("!H", length)
         return ''.join(packed)
 
     @staticmethod
@@ -982,7 +1053,7 @@ class flow_mod(fuzzer):
 
     def __init__(self, xid=None, cookie=None, cookie_mask=None, table_id=None, _command=None, idle_timeout=None,
                  hard_timeout=None, priority=None, buffer_id=None, out_port=None, out_group=None, flags=None,
-                 match=None, instructions=None):
+                 match=None, instructions=None, length=None):
         if xid is not None:
             self.xid = xid
         else:
@@ -1039,6 +1110,10 @@ class flow_mod(fuzzer):
             self.instructions = instructions
         else:
             self.instructions = []
+        if length is not None:
+            self.length = length
+        else:
+            self.length = None
         return
 
     def pack(self):
@@ -1061,8 +1136,11 @@ class flow_mod(fuzzer):
         packed.append('\x00' * 2)
         packed.append(self.match.pack())
         packed.append(loxi.generic_util.pack_list(self.instructions))
-        length = sum([len(x) for x in packed])
-        packed[2] = struct.pack("!H", length)
+        if self.length is not None:
+            packed[2] = struct.pack("!H", self.length)
+        else:
+            length = sum([len(x) for x in packed])
+            packed[2] = struct.pack("!H", length)
         return ''.join(packed)
 
     @staticmethod
@@ -1202,7 +1280,7 @@ class flow_add(flow_mod):
 
     def __init__(self, xid=None, cookie=None, cookie_mask=None, table_id=None, idle_timeout=None, hard_timeout=None,
                  priority=None, buffer_id=None, out_port=None, out_group=None, flags=None, match=None,
-                 instructions=None):
+                 instructions=None, length=None):
         if xid is not None:
             self.xid = xid
         else:
@@ -1255,6 +1333,10 @@ class flow_add(flow_mod):
             self.instructions = instructions
         else:
             self.instructions = []
+        if length is not None:
+            self.length = length
+        else:
+            self.length = None
         return
 
     def pack(self):
@@ -1277,8 +1359,11 @@ class flow_add(flow_mod):
         packed.append('\x00' * 2)
         packed.append(self.match.pack())
         packed.append(loxi.generic_util.pack_list(self.instructions))
-        length = sum([len(x) for x in packed])
-        packed[2] = struct.pack("!H", length)
+        if self.length is not None:
+            packed[2] = struct.pack("!H", self.length)
+        else:
+            length = sum([len(x) for x in packed])
+            packed[2] = struct.pack("!H", length)
         return ''.join(packed)
 
     @staticmethod
@@ -1412,7 +1497,7 @@ class flow_delete(flow_mod):
 
     def __init__(self, xid=None, cookie=None, cookie_mask=None, table_id=None, idle_timeout=None, hard_timeout=None,
                  priority=None, buffer_id=None, out_port=None, out_group=None, flags=None, match=None,
-                 instructions=None):
+                 instructions=None, length=None):
         if xid is not None:
             self.xid = xid
         else:
@@ -1465,6 +1550,10 @@ class flow_delete(flow_mod):
             self.instructions = instructions
         else:
             self.instructions = []
+        if length is not None:
+            self.length = length
+        else:
+            self.length = None
         return
 
     def pack(self):
@@ -1487,8 +1576,11 @@ class flow_delete(flow_mod):
         packed.append('\x00' * 2)
         packed.append(self.match.pack())
         packed.append(loxi.generic_util.pack_list(self.instructions))
-        length = sum([len(x) for x in packed])
-        packed[2] = struct.pack("!H", length)
+        if self.length is not None:
+            packed[2] = struct.pack("!H", self.length)
+        else:
+            length = sum([len(x) for x in packed])
+            packed[2] = struct.pack("!H", length)
         return ''.join(packed)
 
     @staticmethod
@@ -1622,7 +1714,7 @@ class flow_delete_strict(flow_mod):
 
     def __init__(self, xid=None, cookie=None, cookie_mask=None, table_id=None, idle_timeout=None, hard_timeout=None,
                  priority=None, buffer_id=None, out_port=None, out_group=None, flags=None, match=None,
-                 instructions=None):
+                 instructions=None, length=None):
         if xid is not None:
             self.xid = xid
         else:
@@ -1675,6 +1767,10 @@ class flow_delete_strict(flow_mod):
             self.instructions = instructions
         else:
             self.instructions = []
+        if length is not None:
+            self.length = length
+        else:
+            self.length = None
         return
 
     def pack(self):
@@ -1697,8 +1793,11 @@ class flow_delete_strict(flow_mod):
         packed.append('\x00' * 2)
         packed.append(self.match.pack())
         packed.append(loxi.generic_util.pack_list(self.instructions))
-        length = sum([len(x) for x in packed])
-        packed[2] = struct.pack("!H", length)
+        if self.length is not None:
+            packed[2] = struct.pack("!H", self.length)
+        else:
+            length = sum([len(x) for x in packed])
+            packed[2] = struct.pack("!H", length)
         return ''.join(packed)
 
     @staticmethod
@@ -1832,7 +1931,7 @@ class flow_modify(flow_mod):
 
     def __init__(self, xid=None, cookie=None, cookie_mask=None, table_id=None, idle_timeout=None, hard_timeout=None,
                  priority=None, buffer_id=None, out_port=None, out_group=None, flags=None, match=None,
-                 instructions=None):
+                 instructions=None, length=None):
         if xid is not None:
             self.xid = xid
         else:
@@ -1885,6 +1984,10 @@ class flow_modify(flow_mod):
             self.instructions = instructions
         else:
             self.instructions = []
+        if length is not None:
+            self.length = length
+        else:
+            self.length = None
         return
 
     def pack(self):
@@ -1907,8 +2010,11 @@ class flow_modify(flow_mod):
         packed.append('\x00' * 2)
         packed.append(self.match.pack())
         packed.append(loxi.generic_util.pack_list(self.instructions))
-        length = sum([len(x) for x in packed])
-        packed[2] = struct.pack("!H", length)
+        if self.length is not None:
+            packed[2] = struct.pack("!H", self.length)
+        else:
+            length = sum([len(x) for x in packed])
+            packed[2] = struct.pack("!H", length)
         return ''.join(packed)
 
     @staticmethod
@@ -2028,7 +2134,7 @@ class flow_modify_strict(flow_mod):
 
     def __init__(self, xid=None, cookie=None, cookie_mask=None, table_id=None, idle_timeout=None, hard_timeout=None,
                  priority=None, buffer_id=None, out_port=None, out_group=None, flags=None, match=None,
-                 instructions=None):
+                 instructions=None, length=None):
         if xid is not None:
             self.xid = xid
         else:
@@ -2081,6 +2187,10 @@ class flow_modify_strict(flow_mod):
             self.instructions = instructions
         else:
             self.instructions = []
+        if length is not None:
+            self.length = length
+        else:
+            self.length = None
         return
 
     def pack(self):
@@ -2103,8 +2213,11 @@ class flow_modify_strict(flow_mod):
         packed.append('\x00' * 2)
         packed.append(self.match.pack())
         packed.append(loxi.generic_util.pack_list(self.instructions))
-        length = sum([len(x) for x in packed])
-        packed[2] = struct.pack("!H", length)
+        if self.length is not None:
+            packed[2] = struct.pack("!H", self.length)
+        else:
+            length = sum([len(x) for x in packed])
+            packed[2] = struct.pack("!H", length)
         return ''.join(packed)
 
     @staticmethod
@@ -2223,7 +2336,7 @@ class flow_stats_request(stats_request):
     stats_type = 1
 
     def __init__(self, xid=None, flags=None, table_id=None, out_port=None, out_group=None, cookie=None,
-                 cookie_mask=None, match=None):
+                 cookie_mask=None, match=None, length=None):
         if xid is not None:
             self.xid = xid
         else:
@@ -2256,6 +2369,10 @@ class flow_stats_request(stats_request):
             self.match = match
         else:
             self.match = ofp.match()
+        if length is not None:
+            self.length = length
+        else:
+            self.length = None
         return
 
     def pack(self):
@@ -2275,8 +2392,11 @@ class flow_stats_request(stats_request):
         packed.append(struct.pack("!Q", self.cookie))
         packed.append(struct.pack("!Q", self.cookie_mask))
         packed.append(self.match.pack())
-        length = sum([len(x) for x in packed])
-        packed[2] = struct.pack("!H", length)
+        if self.length is not None:
+            packed[2] = struct.pack("!H", self.length)
+        else:
+            length = sum([len(x) for x in packed])
+            packed[2] = struct.pack("!H", length)
         return ''.join(packed)
 
     @staticmethod
@@ -2365,11 +2485,15 @@ class get_config_request(fuzzer):
     version = 4
     type = 7
 
-    def __init__(self, xid=None):
+    def __init__(self, xid=None, length=None):
         if xid is not None:
             self.xid = xid
         else:
             self.xid = None
+        if length is not None:
+            self.length = length
+        else:
+            self.length = None
         return
 
     def pack(self):
@@ -2378,8 +2502,11 @@ class get_config_request(fuzzer):
         packed.append(struct.pack("!B", self.type))
         packed.append(struct.pack("!H", 0))  # placeholder for length at index 2
         packed.append(struct.pack("!L", self.xid))
-        length = sum([len(x) for x in packed])
-        packed[2] = struct.pack("!H", length)
+        if self.length is not None:
+            packed[2] = struct.pack("!H", self.length)
+        else:
+            length = sum([len(x) for x in packed])
+            packed[2] = struct.pack("!H", length)
         return ''.join(packed)
 
     @staticmethod
@@ -2425,7 +2552,7 @@ class group_mod(fuzzer):
     version = 4
     type = 15
 
-    def __init__(self, xid=None, command=None, group_type=None, group_id=None, buckets=None):
+    def __init__(self, xid=None, command=None, group_type=None, group_id=None, buckets=None, length=None):
         if xid is not None:
             self.xid = xid
         else:
@@ -2446,6 +2573,10 @@ class group_mod(fuzzer):
             self.buckets = buckets
         else:
             self.buckets = []
+        if length is not None:
+            self.length = length
+        else:
+            self.length = None
         return
 
     def pack(self):
@@ -2459,8 +2590,11 @@ class group_mod(fuzzer):
         packed.append('\x00' * 1)
         packed.append(struct.pack("!L", self.group_id))
         packed.append(loxi.generic_util.pack_list(self.buckets))
-        length = sum([len(x) for x in packed])
-        packed[2] = struct.pack("!H", length)
+        if self.length is not None:
+            packed[2] = struct.pack("!H", self.length)
+        else:
+            length = sum([len(x) for x in packed])
+            packed[2] = struct.pack("!H", length)
         return ''.join(packed)
 
     @staticmethod
@@ -2535,7 +2669,7 @@ class group_add(group_mod):
     type = 15
     command = 0
 
-    def __init__(self, xid=None, group_type=None, group_id=None, buckets=None):
+    def __init__(self, xid=None, group_type=None, group_id=None, buckets=None, length=None):
         if xid is not None:
             self.xid = xid
         else:
@@ -2552,6 +2686,10 @@ class group_add(group_mod):
             self.buckets = buckets
         else:
             self.buckets = []
+        if length is not None:
+            self.length = length
+        else:
+            self.length = None
         return
 
     def pack(self):
@@ -2565,8 +2703,11 @@ class group_add(group_mod):
         packed.append('\x00' * 1)
         packed.append(struct.pack("!L", self.group_id))
         packed.append(loxi.generic_util.pack_list(self.buckets))
-        length = sum([len(x) for x in packed])
-        packed[2] = struct.pack("!H", length)
+        if self.length is not None:
+            packed[2] = struct.pack("!H", self.length)
+        else:
+            length = sum([len(x) for x in packed])
+            packed[2] = struct.pack("!H", length)
         return ''.join(packed)
 
     @staticmethod
@@ -2630,7 +2771,7 @@ class group_delete(group_mod):
     type = 15
     command = 2
 
-    def __init__(self, xid=None, group_type=None, group_id=None, buckets=None):
+    def __init__(self, xid=None, group_type=None, group_id=None, buckets=None, length=None):
         if xid is not None:
             self.xid = xid
         else:
@@ -2647,6 +2788,10 @@ class group_delete(group_mod):
             self.buckets = buckets
         else:
             self.buckets = []
+        if length is not None:
+            self.length = length
+        else:
+            self.length = None
         return
 
     def pack(self):
@@ -2660,8 +2805,11 @@ class group_delete(group_mod):
         packed.append('\x00' * 1)
         packed.append(struct.pack("!L", self.group_id))
         packed.append(loxi.generic_util.pack_list(self.buckets))
-        length = sum([len(x) for x in packed])
-        packed[2] = struct.pack("!H", length)
+        if self.length is not None:
+            packed[2] = struct.pack("!H", self.length)
+        else:
+            length = sum([len(x) for x in packed])
+            packed[2] = struct.pack("!H", length)
         return ''.join(packed)
 
     @staticmethod
@@ -2725,7 +2873,7 @@ class group_desc_stats_request(stats_request):
     type = 18
     stats_type = 7
 
-    def __init__(self, xid=None, flags=None):
+    def __init__(self, xid=None, flags=None, length=None):
         if xid is not None:
             self.xid = xid
         else:
@@ -2734,6 +2882,10 @@ class group_desc_stats_request(stats_request):
             self.flags = flags
         else:
             self.flags = 0
+        if length is not None:
+            self.length = length
+        else:
+            self.length = None
         return
 
     def pack(self):
@@ -2745,8 +2897,11 @@ class group_desc_stats_request(stats_request):
         packed.append(struct.pack("!H", self.stats_type))
         packed.append(struct.pack("!H", self.flags))
         packed.append('\x00' * 4)
-        length = sum([len(x) for x in packed])
-        packed[2] = struct.pack("!H", length)
+        if self.length is not None:
+            packed[2] = struct.pack("!H", self.length)
+        else:
+            length = sum([len(x) for x in packed])
+            packed[2] = struct.pack("!H", length)
         return ''.join(packed)
 
     @staticmethod
@@ -2798,7 +2953,7 @@ class group_features_stats_request(stats_request):
     type = 18
     stats_type = 8
 
-    def __init__(self, xid=None, flags=None):
+    def __init__(self, xid=None, flags=None, length=None):
         if xid is not None:
             self.xid = xid
         else:
@@ -2807,6 +2962,10 @@ class group_features_stats_request(stats_request):
             self.flags = flags
         else:
             self.flags = 0
+        if length is not None:
+            self.length = length
+        else:
+            self.length = None
         return
 
     def pack(self):
@@ -2818,8 +2977,11 @@ class group_features_stats_request(stats_request):
         packed.append(struct.pack("!H", self.stats_type))
         packed.append(struct.pack("!H", self.flags))
         packed.append('\x00' * 4)
-        length = sum([len(x) for x in packed])
-        packed[2] = struct.pack("!H", length)
+        if self.length is not None:
+            packed[2] = struct.pack("!H", self.length)
+        else:
+            length = sum([len(x) for x in packed])
+            packed[2] = struct.pack("!H", length)
         return ''.join(packed)
 
     @staticmethod
@@ -2871,7 +3033,7 @@ class group_modify(group_mod):
     type = 15
     command = 1
 
-    def __init__(self, xid=None, group_type=None, group_id=None, buckets=None):
+    def __init__(self, xid=None, group_type=None, group_id=None, buckets=None, length=None):
         if xid is not None:
             self.xid = xid
         else:
@@ -2888,6 +3050,10 @@ class group_modify(group_mod):
             self.buckets = buckets
         else:
             self.buckets = []
+        if length is not None:
+            self.length = length
+        else:
+            self.length = None
         return
 
     def pack(self):
@@ -2901,8 +3067,11 @@ class group_modify(group_mod):
         packed.append('\x00' * 1)
         packed.append(struct.pack("!L", self.group_id))
         packed.append(loxi.generic_util.pack_list(self.buckets))
-        length = sum([len(x) for x in packed])
-        packed[2] = struct.pack("!H", length)
+        if self.length is not None:
+            packed[2] = struct.pack("!H", self.length)
+        else:
+            length = sum([len(x) for x in packed])
+            packed[2] = struct.pack("!H", length)
         return ''.join(packed)
 
     @staticmethod
@@ -2971,7 +3140,7 @@ class group_stats_request(stats_request):
     type = 18
     stats_type = 6
 
-    def __init__(self, xid=None, flags=None, group_id=None):
+    def __init__(self, xid=None, flags=None, group_id=None, length=None):
         if xid is not None:
             self.xid = xid
         else:
@@ -2984,6 +3153,10 @@ class group_stats_request(stats_request):
             self.group_id = group_id
         else:
             self.group_id = 0
+        if length is not None:
+            self.length = length
+        else:
+            self.length = None
         return
 
     def pack(self):
@@ -2997,8 +3170,11 @@ class group_stats_request(stats_request):
         packed.append('\x00' * 4)
         packed.append(struct.pack("!L", self.group_id))
         packed.append('\x00' * 4)
-        length = sum([len(x) for x in packed])
-        packed[2] = struct.pack("!H", length)
+        if self.length is not None:
+            packed[2] = struct.pack("!H", self.length)
+        else:
+            length = sum([len(x) for x in packed])
+            packed[2] = struct.pack("!H", length)
         return ''.join(packed)
 
     @staticmethod
@@ -3060,7 +3236,7 @@ class hello(fuzzer):
     version = 4
     type = 0
 
-    def __init__(self, xid=None, elements=None):
+    def __init__(self, xid=None, elements=None, length=None):
         if xid is not None:
             self.xid = xid
         else:
@@ -3069,6 +3245,10 @@ class hello(fuzzer):
             self.elements = elements
         else:
             self.elements = []
+        if length is not None:
+            self.length = length
+        else:
+            self.length = None
         return
 
     def pack(self):
@@ -3078,8 +3258,11 @@ class hello(fuzzer):
         packed.append(struct.pack("!H", 0))  # placeholder for length at index 2
         packed.append(struct.pack("!L", self.xid))
         packed.append(loxi.generic_util.pack_list(self.elements))
-        length = sum([len(x) for x in packed])
-        packed[2] = struct.pack("!H", length)
+        if self.length is not None:
+            packed[2] = struct.pack("!H", self.length)
+        else:
+            length = sum([len(x) for x in packed])
+            packed[2] = struct.pack("!H", length)
         return ''.join(packed)
 
     @staticmethod
@@ -3127,7 +3310,7 @@ class meter_config_stats_request(stats_request):
     type = 18
     stats_type = 10
 
-    def __init__(self, xid=None, flags=None, meter_id=None):
+    def __init__(self, xid=None, flags=None, meter_id=None, length=None):
         if xid is not None:
             self.xid = xid
         else:
@@ -3140,6 +3323,10 @@ class meter_config_stats_request(stats_request):
             self.meter_id = meter_id
         else:
             self.meter_id = 0
+        if length is not None:
+            self.length = length
+        else:
+            self.length = None
         return
 
     def pack(self):
@@ -3153,8 +3340,11 @@ class meter_config_stats_request(stats_request):
         packed.append('\x00' * 4)
         packed.append(struct.pack("!L", self.meter_id))
         packed.append('\x00' * 4)
-        length = sum([len(x) for x in packed])
-        packed[2] = struct.pack("!H", length)
+        if self.length is not None:
+            packed[2] = struct.pack("!H", self.length)
+        else:
+            length = sum([len(x) for x in packed])
+            packed[2] = struct.pack("!H", length)
         return ''.join(packed)
 
     @staticmethod
@@ -3217,7 +3407,7 @@ class meter_features_stats_request(stats_request):
     type = 18
     stats_type = 11
 
-    def __init__(self, xid=None, flags=None):
+    def __init__(self, xid=None, flags=None, length=None):
         if xid is not None:
             self.xid = xid
         else:
@@ -3226,6 +3416,10 @@ class meter_features_stats_request(stats_request):
             self.flags = flags
         else:
             self.flags = 0
+        if length is not None:
+            self.length = length
+        else:
+            self.length = None
         return
 
     def pack(self):
@@ -3237,8 +3431,11 @@ class meter_features_stats_request(stats_request):
         packed.append(struct.pack("!H", self.stats_type))
         packed.append(struct.pack("!H", self.flags))
         packed.append('\x00' * 4)
-        length = sum([len(x) for x in packed])
-        packed[2] = struct.pack("!H", length)
+        if self.length is not None:
+            packed[2] = struct.pack("!H", self.length)
+        else:
+            length = sum([len(x) for x in packed])
+            packed[2] = struct.pack("!H", length)
         return ''.join(packed)
 
     @staticmethod
@@ -3292,7 +3489,7 @@ class meter_mod(fuzzer):
     version = 4
     type = 29
 
-    def __init__(self, xid=None, command=None, flags=None, meter_id=None, meters=None):
+    def __init__(self, xid=None, command=None, flags=None, meter_id=None, meters=None, length=None):
         if xid is not None:
             self.xid = xid
         else:
@@ -3313,6 +3510,10 @@ class meter_mod(fuzzer):
             self.meters = meters
         else:
             self.meters = []
+        if length is not None:
+            self.length = length
+        else:
+            self.length = None
         return
 
     def pack(self):
@@ -3325,8 +3526,11 @@ class meter_mod(fuzzer):
         packed.append(struct.pack("!H", self.flags))
         packed.append(struct.pack("!L", self.meter_id))
         packed.append(loxi.generic_util.pack_list(self.meters))
-        length = sum([len(x) for x in packed])
-        packed[2] = struct.pack("!H", length)
+        if self.length is not None:
+            packed[2] = struct.pack("!H", self.length)
+        else:
+            length = sum([len(x) for x in packed])
+            packed[2] = struct.pack("!H", length)
         return ''.join(packed)
 
     @staticmethod
@@ -3393,7 +3597,7 @@ class meter_stats_request(stats_request):
     type = 18
     stats_type = 9
 
-    def __init__(self, xid=None, flags=None, meter_id=None):
+    def __init__(self, xid=None, flags=None, meter_id=None, length=None):
         if xid is not None:
             self.xid = xid
         else:
@@ -3406,6 +3610,10 @@ class meter_stats_request(stats_request):
             self.meter_id = meter_id
         else:
             self.meter_id = 0
+        if length is not None:
+            self.length = length
+        else:
+            self.length = None
         return
 
     def pack(self):
@@ -3419,8 +3627,11 @@ class meter_stats_request(stats_request):
         packed.append('\x00' * 4)
         packed.append(struct.pack("!L", self.meter_id))
         packed.append('\x00' * 4)
-        length = sum([len(x) for x in packed])
-        packed[2] = struct.pack("!H", length)
+        if self.length is not None:
+            packed[2] = struct.pack("!H", self.length)
+        else:
+            length = sum([len(x) for x in packed])
+            packed[2] = struct.pack("!H", length)
         return ''.join(packed)
 
     @staticmethod
@@ -3478,7 +3689,7 @@ class packet_in(fuzzer):
     type = 10
 
     def __init__(self, xid=None, buffer_id=None, total_len=None, reason=None, table_id=None, cookie=None, match=None,
-                 data=None):
+                 data=None, length=None):
         if xid is not None:
             self.xid = xid
         else:
@@ -3511,6 +3722,10 @@ class packet_in(fuzzer):
             self.data = data
         else:
             self.data = ''
+        if length is not None:
+            self.length = length
+        else:
+            self.length = None
         return
 
     def pack(self):
@@ -3527,8 +3742,11 @@ class packet_in(fuzzer):
         packed.append(self.match.pack())
         packed.append('\x00' * 2)
         packed.append(self.data)
-        length = sum([len(x) for x in packed])
-        packed[2] = struct.pack("!H", length)
+        if self.length is not None:
+            packed[2] = struct.pack("!H", self.length)
+        else:
+            length = sum([len(x) for x in packed])
+            packed[2] = struct.pack("!H", length)
         return ''.join(packed)
 
     @staticmethod
@@ -3622,7 +3840,7 @@ class packet_out(fuzzer):
     version = 4
     type = 13
 
-    def __init__(self, xid=None, buffer_id=None, in_port=None, actions=None, data=None):
+    def __init__(self, xid=None, buffer_id=None, in_port=None, actions=None, data=None, length=None):
         if xid is not None:
             self.xid = xid
         else:
@@ -3643,6 +3861,10 @@ class packet_out(fuzzer):
             self.data = data
         else:
             self.data = ''
+        if length is not None:
+            self.length = length
+        else:
+            self.length = None
         return
 
     def pack(self):
@@ -3658,8 +3880,11 @@ class packet_out(fuzzer):
         packed.append(loxi.generic_util.pack_list(self.actions))
         packed[6] = struct.pack("!H", len(packed[-1]))
         packed.append(self.data)
-        length = sum([len(x) for x in packed])
-        packed[2] = struct.pack("!H", length)
+        if self.length is not None:
+            packed[2] = struct.pack("!H", self.length)
+        else:
+            length = sum([len(x) for x in packed])
+            packed[2] = struct.pack("!H", length)
         return ''.join(packed)
 
     @staticmethod
@@ -3734,7 +3959,7 @@ class port_desc_stats_request(stats_request):
     type = 18
     stats_type = 13
 
-    def __init__(self, xid=None, flags=None):
+    def __init__(self, xid=None, flags=None, length=None):
         if xid is not None:
             self.xid = xid
         else:
@@ -3743,6 +3968,10 @@ class port_desc_stats_request(stats_request):
             self.flags = flags
         else:
             self.flags = 0
+        if length is not None:
+            self.length = length
+        else:
+            self.length = None
         return
 
     def pack(self):
@@ -3754,8 +3983,11 @@ class port_desc_stats_request(stats_request):
         packed.append(struct.pack("!H", self.stats_type))
         packed.append(struct.pack("!H", self.flags))
         packed.append('\x00' * 4)
-        length = sum([len(x) for x in packed])
-        packed[2] = struct.pack("!H", length)
+        if self.length is not None:
+            packed[2] = struct.pack("!H", self.length)
+        else:
+            length = sum([len(x) for x in packed])
+            packed[2] = struct.pack("!H", length)
         return ''.join(packed)
 
     @staticmethod
@@ -3806,7 +4038,7 @@ class port_mod(fuzzer):
     version = 4
     type = 16
 
-    def __init__(self, xid=None, port_no=None, hw_addr=None, config=None, mask=None, advertise=None):
+    def __init__(self, xid=None, port_no=None, hw_addr=None, config=None, mask=None, advertise=None, length=None):
         if xid is not None:
             self.xid = xid
         else:
@@ -3831,6 +4063,10 @@ class port_mod(fuzzer):
             self.advertise = advertise
         else:
             self.advertise = 0
+        if length is not None:
+            self.length = length
+        else:
+            self.length = None
         return
 
     def pack(self):
@@ -3847,8 +4083,11 @@ class port_mod(fuzzer):
         packed.append(struct.pack("!L", self.mask))
         packed.append(struct.pack("!L", self.advertise))
         packed.append('\x00' * 4)
-        length = sum([len(x) for x in packed])
-        packed[2] = struct.pack("!H", length)
+        if self.length is not None:
+            packed[2] = struct.pack("!H", self.length)
+        else:
+            length = sum([len(x) for x in packed])
+            packed[2] = struct.pack("!H", length)
         return ''.join(packed)
 
     @staticmethod
@@ -3931,7 +4170,7 @@ class port_stats_request(stats_request):
     type = 18
     stats_type = 4
 
-    def __init__(self, xid=None, flags=None, port_no=None):
+    def __init__(self, xid=None, flags=None, port_no=None, length=None):
         if xid is not None:
             self.xid = xid
         else:
@@ -3944,6 +4183,10 @@ class port_stats_request(stats_request):
             self.port_no = port_no
         else:
             self.port_no = 0
+        if length is not None:
+            self.length = length
+        else:
+            self.length = None
         return
 
     def pack(self):
@@ -3957,8 +4200,11 @@ class port_stats_request(stats_request):
         packed.append('\x00' * 4)
         packed.append(util.pack_port_no(self.port_no))
         packed.append('\x00' * 4)
-        length = sum([len(x) for x in packed])
-        packed[2] = struct.pack("!H", length)
+        if self.length is not None:
+            packed[2] = struct.pack("!H", self.length)
+        else:
+            length = sum([len(x) for x in packed])
+            packed[2] = struct.pack("!H", length)
         return ''.join(packed)
 
     @staticmethod
@@ -4016,7 +4262,7 @@ class port_status(fuzzer):
     version = 4
     type = 12
 
-    def __init__(self, xid=None, reason=None, desc=None):
+    def __init__(self, xid=None, reason=None, desc=None, length=None):
         if xid is not None:
             self.xid = xid
         else:
@@ -4029,6 +4275,10 @@ class port_status(fuzzer):
             self.desc = desc
         else:
             self.desc = ofp.port_desc()
+        if length is not None:
+            self.length = length
+        else:
+            self.length = None
         return
 
     def pack(self):
@@ -4040,8 +4290,11 @@ class port_status(fuzzer):
         packed.append(struct.pack("!B", self.reason))
         packed.append('\x00' * 7)
         packed.append(self.desc.pack())
-        length = sum([len(x) for x in packed])
-        packed[2] = struct.pack("!H", length)
+        if self.length is not None:
+            packed[2] = struct.pack("!H", self.length)
+        else:
+            length = sum([len(x) for x in packed])
+            packed[2] = struct.pack("!H", length)
         return ''.join(packed)
 
     @staticmethod
@@ -4096,7 +4349,7 @@ class queue_get_config_request(fuzzer):
     version = 4
     type = 22
 
-    def __init__(self, xid=None, port=None):
+    def __init__(self, xid=None, port=None, length=None):
         if xid is not None:
             self.xid = xid
         else:
@@ -4105,6 +4358,10 @@ class queue_get_config_request(fuzzer):
             self.port = port
         else:
             self.port = 0
+        if length is not None:
+            self.length = length
+        else:
+            self.length = None
         return
 
     def pack(self):
@@ -4115,8 +4372,11 @@ class queue_get_config_request(fuzzer):
         packed.append(struct.pack("!L", self.xid))
         packed.append(util.pack_port_no(self.port))
         packed.append('\x00' * 4)
-        length = sum([len(x) for x in packed])
-        packed[2] = struct.pack("!H", length)
+        if self.length is not None:
+            packed[2] = struct.pack("!H", self.length)
+        else:
+            length = sum([len(x) for x in packed])
+            packed[2] = struct.pack("!H", length)
         return ''.join(packed)
 
     @staticmethod
@@ -4169,7 +4429,7 @@ class queue_stats_request(stats_request):
     type = 18
     stats_type = 5
 
-    def __init__(self, xid=None, flags=None, port_no=None, queue_id=None):
+    def __init__(self, xid=None, flags=None, port_no=None, queue_id=None, length=None):
         if xid is not None:
             self.xid = xid
         else:
@@ -4186,6 +4446,10 @@ class queue_stats_request(stats_request):
             self.queue_id = queue_id
         else:
             self.queue_id = 0
+        if length is not None:
+            self.length = length
+        else:
+            self.length = None
         return
 
     def pack(self):
@@ -4199,8 +4463,11 @@ class queue_stats_request(stats_request):
         packed.append('\x00' * 4)
         packed.append(util.pack_port_no(self.port_no))
         packed.append(struct.pack("!L", self.queue_id))
-        length = sum([len(x) for x in packed])
-        packed[2] = struct.pack("!H", length)
+        if self.length is not None:
+            packed[2] = struct.pack("!H", self.length)
+        else:
+            length = sum([len(x) for x in packed])
+            packed[2] = struct.pack("!H", length)
         return ''.join(packed)
 
     @staticmethod
@@ -4263,7 +4530,7 @@ class role_request(fuzzer):
     version = 4
     type = 24
 
-    def __init__(self, xid=None, role=None, generation_id=None):
+    def __init__(self, xid=None, role=None, generation_id=None, length=None):
         if xid is not None:
             self.xid = xid
         else:
@@ -4276,6 +4543,10 @@ class role_request(fuzzer):
             self.generation_id = generation_id
         else:
             self.generation_id = 0
+        if length is not None:
+            self.length = length
+        else:
+            self.length = None
         return
 
     def pack(self):
@@ -4287,8 +4558,11 @@ class role_request(fuzzer):
         packed.append(struct.pack("!L", self.role))
         packed.append('\x00' * 4)
         packed.append(struct.pack("!Q", self.generation_id))
-        length = sum([len(x) for x in packed])
-        packed[2] = struct.pack("!H", length)
+        if self.length is not None:
+            packed[2] = struct.pack("!H", self.length)
+        else:
+            length = sum([len(x) for x in packed])
+            packed[2] = struct.pack("!H", length)
         return ''.join(packed)
 
     @staticmethod
@@ -4347,7 +4621,7 @@ class set_config(fuzzer):
     version = 4
     type = 9
 
-    def __init__(self, xid=None, flags=None, miss_send_len=None):
+    def __init__(self, xid=None, flags=None, miss_send_len=None, length=None):
         if xid is not None:
             self.xid = xid
         else:
@@ -4360,6 +4634,10 @@ class set_config(fuzzer):
             self.miss_send_len = miss_send_len
         else:
             self.miss_send_len = 0
+        if length is not None:
+            self.length = length
+        else:
+            self.length = None
         return
 
     def pack(self):
@@ -4370,8 +4648,11 @@ class set_config(fuzzer):
         packed.append(struct.pack("!L", self.xid))
         packed.append(struct.pack("!H", self.flags))
         packed.append(struct.pack("!H", self.miss_send_len))
-        length = sum([len(x) for x in packed])
-        packed[2] = struct.pack("!H", length)
+        if self.length is not None:
+            packed[2] = struct.pack("!H", self.length)
+        else:
+            length = sum([len(x) for x in packed])
+            packed[2] = struct.pack("!H", length)
         return ''.join(packed)
 
     @staticmethod
@@ -4426,7 +4707,7 @@ class table_features_stats_request(stats_request):
     type = 18
     stats_type = 12
 
-    def __init__(self, xid=None, flags=None, entries=None):
+    def __init__(self, xid=None, flags=None, entries=None, length=None):
         if xid is not None:
             self.xid = xid
         else:
@@ -4439,6 +4720,10 @@ class table_features_stats_request(stats_request):
             self.entries = entries
         else:
             self.entries = []
+        if length is not None:
+            self.length = length
+        else:
+            self.length = None
         return
 
     def pack(self):
@@ -4451,8 +4736,11 @@ class table_features_stats_request(stats_request):
         packed.append(struct.pack("!H", self.flags))
         packed.append('\x00' * 4)
         packed.append(loxi.generic_util.pack_list(self.entries))
-        length = sum([len(x) for x in packed])
-        packed[2] = struct.pack("!H", length)
+        if self.length is not None:
+            packed[2] = struct.pack("!H", self.length)
+        else:
+            length = sum([len(x) for x in packed])
+            packed[2] = struct.pack("!H", length)
         return ''.join(packed)
 
     @staticmethod
@@ -4509,7 +4797,7 @@ class table_mod(fuzzer):
     version = 4
     type = 17
 
-    def __init__(self, xid=None, table_id=None, config=None):
+    def __init__(self, xid=None, table_id=None, config=None, length=None):
         if xid is not None:
             self.xid = xid
         else:
@@ -4522,6 +4810,10 @@ class table_mod(fuzzer):
             self.config = config
         else:
             self.config = 0
+        if length is not None:
+            self.length = length
+        else:
+            self.length = None
         return
 
     def pack(self):
@@ -4533,8 +4825,11 @@ class table_mod(fuzzer):
         packed.append(struct.pack("!B", self.table_id))
         packed.append('\x00' * 3)
         packed.append(struct.pack("!L", self.config))
-        length = sum([len(x) for x in packed])
-        packed[2] = struct.pack("!H", length)
+        if self.length is not None:
+            packed[2] = struct.pack("!H", self.length)
+        else:
+            length = sum([len(x) for x in packed])
+            packed[2] = struct.pack("!H", length)
         return ''.join(packed)
 
     @staticmethod
@@ -4590,7 +4885,7 @@ class table_stats_request(stats_request):
     type = 18
     stats_type = 3
 
-    def __init__(self, xid=None, flags=None):
+    def __init__(self, xid=None, flags=None, length=None):
         if xid is not None:
             self.xid = xid
         else:
@@ -4599,6 +4894,10 @@ class table_stats_request(stats_request):
             self.flags = flags
         else:
             self.flags = 0
+        if length is not None:
+            self.length = length
+        else:
+            self.length = None
         return
 
     def pack(self):
@@ -4610,8 +4909,11 @@ class table_stats_request(stats_request):
         packed.append(struct.pack("!H", self.stats_type))
         packed.append(struct.pack("!H", self.flags))
         packed.append('\x00' * 4)
-        length = sum([len(x) for x in packed])
-        packed[2] = struct.pack("!H", length)
+        if self.length is not None:
+            packed[2] = struct.pack("!H", self.length)
+        else:
+            length = sum([len(x) for x in packed])
+            packed[2] = struct.pack("!H", length)
         return ''.join(packed)
 
     @staticmethod
