@@ -37,3 +37,43 @@ class Echo(base_tests.SimpleProtocol):
         self.assertEqual(request.xid, response.xid,
                         'response xid != request xid')
         self.assertEqual(len(response.data), 0, 'response data non-empty')
+
+
+class flow_add(base_tests.SimpleProtocol):
+    def runTest(self):
+        out_port, = openflow_ports(1)
+
+        request = ofp.message.flow_add(
+                table_id=test_param_get("table", 0),
+                cookie=24,
+                match=match,
+                instructions=[
+                    ofp.instruction.apply_actions(
+                        actions=[
+                            ofp.action.output(
+                                port=out_port,
+                                max_len=ofp.OFPCML_NO_BUFFER)])],
+                buffer_id=ofp.OFP_NO_BUFFER,
+                priority=1000)
+
+        self.controller.message_send(request)
+        do_barrier(self.controller)
+
+        request = ofp.message.flow_add(
+                table_id=test_param_get("table", 0),
+                cookie=42,
+                match=match,
+                instructions=[
+                    ofp.instruction.apply_actions(
+                        actions=[
+                            ofp.action.output(
+                                port=out_port,
+                                max_len=ofp.OFPCML_NO_BUFFER)])],
+                buffer_id=ofp.OFP_NO_BUFFER,
+                priority=1000)
+
+        self.controller.message_send(request)
+        do_barrier(self.controller)
+
+        delete_all_flows(self.controller)
+        delete_all_flows(self.controller)
