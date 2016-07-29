@@ -1,14 +1,3 @@
-# Distributed under the OpenFlow Software License (see LICENSE)
-# Copyright (c) 2010 The Board of Trustees of The Leland Stanford Junior University
-# Copyright (c) 2012, 2013 Big Switch Networks, Inc.
-# Copyright (c) 2012, 2013 CPqD
-# Copyright (c) 2012, 2013 Ericsson
-"""
-Basic test cases
-
-Test cases in other modules depend on this functionality.
-"""
-
 import logging
 
 from oftest import config
@@ -28,7 +17,7 @@ class Echo(base_tests.SimpleProtocol):
 
     def runTest(self):
         while True:
-            request = ofp.fuzzer.echo_requestlength=random.randint(5,20)()
+            request = ofp.fuzzer.echo_request()
             response, pkt = self.controller.transact(request)
         self.assertTrue(response is not None,
                         "Did not get echo reply")

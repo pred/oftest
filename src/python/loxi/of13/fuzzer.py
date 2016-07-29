@@ -643,28 +643,52 @@ class barrier_request(fuzzer):
     version = 4
     type = 20
 
-    def __init__(self, xid=None, length=None):
+    def __init__(self, xid=None, length=None, version = 4, type = 20, bversion="!B", btype="!B", blength="!H", bxid = "!L"):
         if xid is not None:
             self.xid = xid
         else:
             self.xid = None
+        if version != 4:
+            self.version = version
+        else:
+            self.version = 4
+        if type != 20:
+            self.type = type
+        else:
+            self.type = 20
         if length is not None:
             self.length = length
         else:
             self.length = None
+        if bxid != "!L":
+            self.bxid = bxid
+        else:
+            self.bxid = bxid
+        if bversion != "!B":
+            self.bversion = bversion
+        else:
+            self.bversion = bversion
+        if btype != "!B":
+            self.btype = btype
+        else:
+            self.btype = btype
+        if blength != "!H":
+            self.blength = blength
+        else:
+            self.blength = blength
         return
 
     def pack(self):
         packed = []
-        packed.append(struct.pack("!B", self.version))
-        packed.append(struct.pack("!B", self.type))
-        packed.append(struct.pack("!H", 0))  # placeholder for length at index 2
-        packed.append(struct.pack("!L", self.xid))
+        packed.append(struct.pack(self.bversion, self.version))
+        packed.append(struct.pack(self.btype, self.type))
+        packed.append(struct.pack(self.blength, 0))  # placeholder for length at index 2
+        packed.append(struct.pack(self.bxid, self.xid))
         if self.length is not None:
-            packed[2] = struct.pack("!H", self.length)
+            packed[2] = struct.pack(self.blength, self.length)
         else:
             length = sum([len(x) for x in packed])
-            packed[2] = struct.pack("!H", length)
+            packed[2] = struct.pack(self.blength, length)
         return ''.join(packed)
 
     @staticmethod
