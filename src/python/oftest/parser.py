@@ -71,7 +71,7 @@ def add(self,commande,iteration=1, xid=None, length=None, version = 4, type = No
 		else:
 			self.type = 2
 		for i in range(self.iteration):
-			request = ofp.fuzzer.echo_request(xid, length, version, self.type, bversion, btype, blength, bxid, data)
+			request = ofp.fuzzer.echo_request(xid, data, version, self.type, length, bxid, bversion, btype, blength)
 			self.controller.message_send(request)
 
 
