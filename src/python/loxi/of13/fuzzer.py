@@ -923,7 +923,7 @@ stats_request.subtypes[0] = desc_stats_request
 
 class echo_request(fuzzer):
 
-    def __init__(self, xid=None, data=None, version=4, type=2, length=None):
+    def __init__(self, xid=None, data=None, version=4, type=2, length=None, bversion = "!B", btype = "!B", blength = "!H", bxid = "!L"):
         if xid is not None:
             self.xid = xid
         else:
@@ -944,6 +944,22 @@ class echo_request(fuzzer):
             self.length = length
         else:
             self.length = None
+        if bxid != "!L":
+            self.bxid = bxid
+        else:
+            self.bxid = "!L"
+        if bversion != "!B":
+            self.bversion = bversion
+        else:
+            self.bversion = "!B"
+        if btype != "!B":
+            self.btype = btype
+        else:
+            self.btype = "!B"
+        if blength != "!H":
+            self.blength = blength
+        else:
+            self.blength = "!H"
         return
 
     def pack(self):
@@ -953,11 +969,11 @@ class echo_request(fuzzer):
         packed.append(struct.pack("!H", 0))  # placeholder for length at index 2
         packed.append(struct.pack("!L", self.xid))
         packed.append(self.data)
-        if self.length is not None:
-            packed[2] = struct.pack("!H", self.length)
-        else:
-            length = sum([len(x) for x in packed])
-            packed[2] = struct.pack("!H", length)
+        #if self.length is not None:
+            #packed[2] = struct.pack("!H", self.length)
+        #else:
+        length = sum([len(x) for x in packed])
+        packed[2] = struct.pack("!H", length)
         return ''.join(packed)
 
     @staticmethod
